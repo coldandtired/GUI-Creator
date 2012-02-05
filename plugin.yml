@@ -1,0 +1,24 @@
+name: GUI Creator
+version: 1.4.2
+author: coldandtired
+main: me.coldandtired.GUI_Creator.Main
+description: Generate GUIs for your players with the mimimum of effort!
+website: http://dev.bukkit.org/server-mods/gui-creator/
+depend: [Spout]
+softdepend: [Vault]
+commands:
+  reload_GUI_Creator:
+    aliases: rgc
+    description: Reloads the global screens list without reloading the plugin.
+    permission: gui_creator.can_reload_screens
+  open_screen:
+    aliases: os
+    description: Opens the GUI to a specified screen.
+    permission: gui_creator.can_open_gui
+permissions:
+  gui_creator.can_reload_screens:
+    description: Allows the user to reload the screens files.
+    default: no
+  gui_creator.can_open_gui:
+    description: Allows the user to open the GUI.
+    default: no
