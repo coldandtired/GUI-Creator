@@ -61,6 +61,12 @@ public class GUI  extends GenericPopup
 				replacement = g.slider.value;
 				break;
 			}
+			else if (g.combo_box != null && g.combo_box.name.equalsIgnoreCase(name))
+			{
+				if (g.combo_box.items != null && g.combo_box.getSelectedRow() > -1)
+				replacement = g.combo_box.items.get(g.combo_box.getSelectedItem());
+				break;
+			}
 		}
 		if (name.equalsIgnoreCase("gc_player_name")) replacement = me.getName();
 		if (name.equalsIgnoreCase("gc_server_name")) replacement = me.getServer().getName();
@@ -317,6 +323,14 @@ public class GUI  extends GenericPopup
 				g.slider.setX(x).setY(y);
 				g.slider.setFixed(true);
 				attachWidget(plugin, g.slider);	
+			}
+			
+			if (g.combo_box != null)
+			{
+				g.combo_box.setWidth(w).setHeight(h);
+				g.combo_box.setX(x).setY(y);
+				g.combo_box.setFixed(true);
+				attachWidget(plugin, g.combo_box);	
 			}
 		}		
 		for (Widget w : this.getAttachedWidgets())

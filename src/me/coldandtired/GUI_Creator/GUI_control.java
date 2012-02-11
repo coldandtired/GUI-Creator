@@ -27,9 +27,10 @@ public class GUI_control
 	GUI_radiobutton radio_button;
 	GUI_slider slider;	
 	GUI_linkbutton link_button;
+	GUI_combobox combo_box;
 	
 	List<String> control_names = Arrays.asList("BUTTON", "TEXT_BOX", "GRADIENT", "TEXT_LABEL", "SPACER", "TEXTURE", "CHECK_BOX",
-			"RADIO_BUTTON", "SLIDER", "LINK_BUTTON");
+			"RADIO_BUTTON", "SLIDER", "LINK_BUTTON", "COMBO_BOX");
 	
 	static String get_info(String info)
 	{
@@ -132,6 +133,10 @@ public class GUI_control
 				link_button = new GUI_linkbutton((Map<String, Object>)c, gui);
 				link_button.setPriority(rp);
 				break;	
+			case 10: // combo_box
+				combo_box = new GUI_combobox((Map<String, Object>)c, gui);
+				combo_box.setPriority(rp);
+				break;
 			default: break;
 		}
 	}

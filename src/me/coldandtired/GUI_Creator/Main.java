@@ -23,6 +23,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -227,6 +228,11 @@ public class Main extends JavaPlugin
 	{    	
 		if(cmd.getName().equalsIgnoreCase("reload_GUI_creator") && args.length == 0)
 		{
+			if (sender instanceof Player && !sender.hasPermission("gui_creator.can_reload_screens"))
+			{
+				sender.sendMessage(ChatColor.RED + "[GUI Creator] You don't have permission to reload the screens!");
+				return true;
+			}
 			get_screens();
 			log.info("[GUI Creator] Screen files reloaded!");
 			if (sender instanceof SpoutPlayer) sender.sendMessage(ChatColor.GREEN + "[GUI Creator] Screen files reloaded!");
@@ -235,6 +241,17 @@ public class Main extends JavaPlugin
 		
 		if(cmd.getName().equalsIgnoreCase("open_screen") && args.length < 2)
 		{
+			if (!(sender instanceof Player))
+			{
+				sender.sendMessage(ChatColor.RED + "[GUI Creator] This command can only be used by a player!");
+				return true;
+			}
+			
+			if (!sender.hasPermission("gui_creator.can_open_gui"))
+			{
+				sender.sendMessage(ChatColor.RED + "[GUI Creator] You don't have permission to view the GUI!");
+				return true;
+			}
 			SpoutPlayer p;
 	    	if (sender instanceof SpoutPlayer) p = (SpoutPlayer)sender; else return true;
 			if (!p.isSpoutCraftEnabled() || Main.screen_files == null) return true;
