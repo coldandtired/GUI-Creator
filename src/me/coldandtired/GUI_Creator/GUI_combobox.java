@@ -1,10 +1,14 @@
 package me.coldandtired.GUI_Creator;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Player;
 import org.getspout.spoutapi.gui.GenericComboBox;
 
 public class GUI_combobox extends GenericComboBox
@@ -25,7 +29,9 @@ public class GUI_combobox extends GenericComboBox
 		name = cb.containsKey("name") ? GUI_control.get_string(cb.get("name")) : "";
 		info = GUI_control.get_info(cb.containsKey("info") ? GUI_control.get_string(cb.get("info")) : "");
 		if (!info.equalsIgnoreCase("")) setTooltip(info);
-		if (cb.containsKey("items"))
+		String mode = cb.containsKey("mode") ? GUI_control.get_string(cb.get("mode")) : "normal";
+		
+		if (mode.equalsIgnoreCase("normal") && cb.containsKey("items"))
 		{
 			List<String> temp = new ArrayList<String>();
 			items = new HashMap<String, String>();
@@ -40,6 +46,35 @@ public class GUI_combobox extends GenericComboBox
 			}
 			this.setItems(temp);
 		}
+		
+		if (mode.equalsIgnoreCase("online_players"))
+		{
+			items = new HashMap<String, String>();
+			List<String> temp = new ArrayList<String>();
+			for (Player p : Arrays.asList(Bukkit.getOnlinePlayers()))
+			{
+				String s = p.getName();
+				temp.add(s);
+				items.put(s, s);
+			}
+			temp.add("No player");
+			items.put("No player", "");
+			this.setItems(temp);
+		}
+		if (mode.equalsIgnoreCase("offline_players"))
+		{
+			items = new HashMap<String, String>();
+			List<String> temp = new ArrayList<String>();
+			for (OfflinePlayer p : Arrays.asList(Bukkit.getServer().getOfflinePlayers()))
+			{
+				String s = p.getName();
+				temp.add(s);
+				items.put(s, s);
+			}
+			temp.add("No player");
+			items.put("No player", "");
+			this.setItems(temp);
+		}		
 	}
 	
 	public void onSelectionChanged(int i, String text) 

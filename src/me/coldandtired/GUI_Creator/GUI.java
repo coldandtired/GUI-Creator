@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Map;
 
 import org.bukkit.permissions.Permission;
+import org.getspout.spoutapi.gui.ContainerType;
+import org.getspout.spoutapi.gui.GenericContainer;
 import org.getspout.spoutapi.gui.GenericGradient;
 import org.getspout.spoutapi.gui.GenericPopup;
 import org.getspout.spoutapi.gui.Gradient;
@@ -319,10 +321,21 @@ public class GUI  extends GenericPopup
 			
 			if (g.slider != null)
 			{
-				g.slider.setWidth(w).setHeight(h);
-				g.slider.setX(x).setY(y);
+				GenericContainer gc = new GenericContainer();
+				gc.setX(x).setY(y);
+				gc.setWidth(w).setHeight(h);
+				gc.setLayout(ContainerType.HORIZONTAL);
+				GUI_sliderminus sm = new GUI_sliderminus("<", this);
+				sm.setX(x).setY(y);
+				sm.setWidth(10).setHeight(h);
+				g.slider.setWidth(w - 18).setHeight(h);
+				g.slider.setX(x + 8).setY(y);
 				g.slider.setFixed(true);
-				attachWidget(plugin, g.slider);	
+				GUI_sliderplus sp = new GUI_sliderplus(">", this);
+				sm.setX(gc.getWidth() - 10).setY(y);
+				sm.setWidth(10).setHeight(h);
+				gc.addChildren(sm, g.slider, sp);
+				attachWidgets(plugin, gc);	
 			}
 			
 			if (g.combo_box != null)

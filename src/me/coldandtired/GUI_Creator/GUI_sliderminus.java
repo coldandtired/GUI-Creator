@@ -1,0 +1,34 @@
+package me.coldandtired.GUI_Creator;
+
+import org.getspout.spoutapi.event.screen.ButtonClickEvent;
+import org.getspout.spoutapi.gui.GenericButton;
+import org.getspout.spoutapi.gui.Widget;
+
+public class GUI_sliderminus extends GenericButton
+{
+	GUI gui;
+	
+	public GUI_sliderminus(String text, GUI gui) 
+	{
+		super(text);
+		this.gui = gui;
+	}
+
+	public void onButtonClick(ButtonClickEvent event) 
+	{
+		for (Widget w : this.getContainer().getChildren())
+		{
+			if (w instanceof GUI_slider)
+			{
+				GUI_slider slider = (GUI_slider)w;
+				int i = ((int) (slider.getSliderPosition() * slider.max)) - 1;
+				if (i >= 0)
+				{
+					slider.setSliderPosition((float)i / slider.max);
+					slider.text = slider.get_text(i);
+					gui.replace_text();
+				}
+			}
+		}		
+	}
+}
