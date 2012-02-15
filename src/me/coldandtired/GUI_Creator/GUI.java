@@ -252,7 +252,7 @@ public class GUI  extends GenericPopup
 				attachWidget(plugin, g.cb);
 			}
 				
-			if (g.link_button != null)
+			else if (g.link_button != null)
 			{
 				g.link_button.setX(x).setY(y);
 				g.link_button.setWidth(w).setHeight(h);
@@ -261,7 +261,7 @@ public class GUI  extends GenericPopup
 				attachWidget(plugin, g.link_button);
 			}
 			
-			if (g.tf != null)
+			else if (g.tf != null)
 			{
 				g.tf.setWidth(w - 3).setHeight(13);
 				g.tf.setX((int) (x + (w / 2) - (g.tf.getWidth() / 2))).setY((int) (y + (h / 2) - (g.tf.getHeight() / 2)));
@@ -269,7 +269,7 @@ public class GUI  extends GenericPopup
 				attachWidget(plugin, g.tf);	
 			}
 			
-			if (g.gradient != null)
+			else if (g.gradient != null)
 			{
 				g.gradient.setWidth(w).setHeight(h);
 				g.gradient.setX(x).setY(y);
@@ -277,7 +277,7 @@ public class GUI  extends GenericPopup
 				attachWidget(plugin, g.gradient);
 			}
 				
-			if (g.label != null)
+			else if (g.label != null)
 			{		
 				//int temph = GUI_label.getStringHeight(g.label.getText());				
 				//int tempw = GUI_label.getStringWidth(g.label.getText());
@@ -290,7 +290,7 @@ public class GUI  extends GenericPopup
 				attachWidget(plugin, g.label);
 			}
 			
-			if (g.spacer != null)
+			else if (g.spacer != null)
 			{
 				g.spacer.setWidth(w).setHeight(h / 3);				
 				g.spacer.setX(x).setY((int) (y + (h / 2) - (g.spacer.getHeight() / 2)));
@@ -298,14 +298,14 @@ public class GUI  extends GenericPopup
 				attachWidget(plugin, g.spacer);
 			}			
 			
-			if (g.texture != null)
+			else if (g.texture != null)
 			{
 				g.texture.setX(x).setY(y);
 				g.texture.setWidth(w).setHeight(h);
 				attachWidget(plugin, g.texture);
 			}
 			
-			if (g.check_box != null)
+			else if (g.check_box != null)
 			{
 				//int tempw = GUI_label.getStringWidth(g.check_box.getText(), g.check_box.getScale()) + 19;
 				g.check_box.setWidth(18).setHeight(18);
@@ -315,7 +315,7 @@ public class GUI  extends GenericPopup
 				attachWidget(plugin, g.check_box);
 			}
 			
-			if (g.radio_button != null)
+			else if (g.radio_button != null)
 			{
 				g.radio_button.setWidth(18).setHeight(18);
 				//int tempw = GUI_label.getStringWidth(g.radio_button.getText(), g.radio_button.getScale()) + 18;				
@@ -325,7 +325,7 @@ public class GUI  extends GenericPopup
 				attachWidget(plugin, g.radio_button);	
 			}
 			
-			if (g.slider != null)
+			else if (g.slider != null)
 			{
 				GenericContainer gc = new GenericContainer();
 				gc.setX(x).setY(y);
@@ -344,12 +344,21 @@ public class GUI  extends GenericPopup
 				attachWidgets(plugin, gc);	
 			}
 			
-			if (g.combo_box != null)
+			else if (g.combo_box != null)
 			{
 				g.combo_box.setWidth(w).setHeight(h);
 				g.combo_box.setX(x).setY(y);
 				g.combo_box.setFixed(true);
 				attachWidget(plugin, g.combo_box);	
+			}
+			
+			else if (g.url_button != null)
+			{
+				g.url_button.setX(x).setY(y);
+				g.url_button.setWidth(w).setHeight(h);
+				g.url_button.setAlign(WidgetAnchor.CENTER_CENTER);
+				g.url_button.setFixed(true);
+				attachWidget(plugin, g.url_button);
 			}
 		}		
 		for (Widget w : this.getAttachedWidgets())
@@ -359,7 +368,7 @@ public class GUI  extends GenericPopup
 				GUI_radiobutton rb = (GUI_radiobutton)w;
 				if (rb.selected) rb.setSelected(true);
 			}
-			if (w instanceof GUI_slider)
+			else if (w instanceof GUI_slider)
 			{
 				GUI_slider slider = (GUI_slider)w;
 				if (!slider.skin_texture.equalsIgnoreCase("") && !slider.mode.equalsIgnoreCase("normal")) 
@@ -375,7 +384,7 @@ public class GUI  extends GenericPopup
 		{
 			if (g.texture != null && g.texture.name.equalsIgnoreCase(name))
 			{
-				File f = new File(plugin.getDataFolder() + File.separator + "Skins" + File.separator + player + ".png");
+				File f = new File(plugin.getDataFolder() + File.separator + "Skins" + File.separator + player.toLowerCase() + ".png");
 				if (f.exists()) g.texture.setUrl(f.getPath()); else g.texture.setUrl("");
 			}
 		}

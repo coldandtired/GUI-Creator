@@ -43,7 +43,7 @@ public class GUI_button extends GenericButton
 	}
 	
 	public void onButtonClick(ButtonClickEvent event) 
-	{
+	{		
 		if (this.permissions != null) for (String s : permissions) gui.me.addAttachment(gui.plugin, s, true, 50);
 		String s = command;
 		while (s.contains("^")) s = gui.replace_params(s, "", "");

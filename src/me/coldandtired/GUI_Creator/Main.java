@@ -55,6 +55,8 @@ public class Main extends JavaPlugin
     static String text_box_inner_color;
     static String text_box_outer_color;
     static String link_button_color;
+    static String combo_box_color;
+    static String url_button_color;
     public static Economy economy = null;
     //public Spout_listener spout_listener = new Spout_listener(this); 
 
@@ -67,7 +69,7 @@ public class Main extends JavaPlugin
     }
     
     File create_skin(String name)
-	{name = "kanabal";
+	{
     	String s = "http://s3.amazonaws.com/MinecraftSkins/" + name + ".png";
 		BufferedImage old = null;	
 		try 
@@ -93,7 +95,7 @@ public class Main extends JavaPlugin
 		    		8, 20, 4, 32, null);// right leg
 		    g.drawImage(old, 3, 0, 13, 10,
 		    		40, 8, 48, 16, null);// head accessory
-		    File f = new File(getDataFolder() + File.separator + "Skins" + File.separator + name + ".png");
+		    File f = new File(getDataFolder() + File.separator + "Skins" + File.separator + name.toLowerCase() + ".png");
 		    ImageIO.write(new_image, "png", f);
 			return f;			
 		} 
@@ -126,6 +128,8 @@ public class Main extends JavaPlugin
 		config.addDefault("selected_button_color", "120,50,120");
 		config.addDefault("screen_button_color", "150,150,150");
 		config.addDefault("command_button_color", "255,255,255");
+		config.addDefault("combo_box_color", "255,255,255");
+		config.addDefault("url_button_color", "255,255,255");
 		config.addDefault("button_hover_color", "150,120,50");
 		config.addDefault("background_color", "0,0,0,130");
 		config.addDefault("spacer_color", "255,255,255");
@@ -142,6 +146,8 @@ public class Main extends JavaPlugin
 		saveConfig();
 		selected_button_color = config.getString("selected_button_color");
 		screen_button_color = config.getString("screen_button_color");
+		combo_box_color = config.getString("combo_box_color");
+		url_button_color = config.getString("url_button_color");
 		command_button_color = config.getString("command_button_color");
 		button_hover_color = config.getString("button_hover_color");
 		background_color = config.getString("background_color");

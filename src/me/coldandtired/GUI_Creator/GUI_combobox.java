@@ -26,7 +26,7 @@ public class GUI_combobox extends GenericComboBox
 		this.gui = gui;
 		text = cb.containsKey("text") ? GUI_control.get_string(cb.get("text")) : "";
 		setText(text);
-		String text_colour = cb.containsKey("text_color") ? GUI_control.get_string(cb.get("text_color")) : Main.command_button_color;
+		String text_colour = cb.containsKey("text_color") ? GUI_control.get_string(cb.get("text_color")) : Main.combo_box_color;
 		setColor(GUI_control.get_colour(text_colour));
 		String hover_colour = cb.containsKey("hover_color") ? GUI_control.get_string(cb.get("hover_color")) : Main.button_hover_color;
 		setHoverColor(GUI_control.get_colour(hover_colour));
