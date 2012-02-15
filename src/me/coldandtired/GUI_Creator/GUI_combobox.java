@@ -17,6 +17,7 @@ public class GUI_combobox extends GenericComboBox
 	String info;
 	String text;
 	String name;
+	String skin_texture;
 	Map<String, String> items;
 	
 	@SuppressWarnings("unchecked")
@@ -25,8 +26,12 @@ public class GUI_combobox extends GenericComboBox
 		this.gui = gui;
 		text = cb.containsKey("text") ? GUI_control.get_string(cb.get("text")) : "";
 		setText(text);
-		
+		String text_colour = cb.containsKey("text_color") ? GUI_control.get_string(cb.get("text_color")) : Main.command_button_color;
+		setColor(GUI_control.get_colour(text_colour));
+		String hover_colour = cb.containsKey("hover_color") ? GUI_control.get_string(cb.get("hover_color")) : Main.button_hover_color;
+		setHoverColor(GUI_control.get_colour(hover_colour));
 		name = cb.containsKey("name") ? GUI_control.get_string(cb.get("name")) : "";
+		skin_texture = cb.containsKey("skin_texture") ? GUI_control.get_string(cb.get("skin_texture")) : "";
 		info = GUI_control.get_info(cb.containsKey("info") ? GUI_control.get_string(cb.get("info")) : "");
 		if (!info.equalsIgnoreCase("")) setTooltip(info);
 		String mode = cb.containsKey("mode") ? GUI_control.get_string(cb.get("mode")) : "normal";
@@ -82,6 +87,7 @@ public class GUI_combobox extends GenericComboBox
 		if (i > -1)
 		{
 			setText(text);
+			if (!skin_texture.equalsIgnoreCase("")) gui.update_texture(skin_texture, items.get(text));
 			gui.replace_text();
 		}
 	}

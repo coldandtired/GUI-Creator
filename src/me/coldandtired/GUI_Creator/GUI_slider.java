@@ -25,10 +25,10 @@ public class GUI_slider extends GenericSlider
 	List<String> values;
 	String info;
 	String original_text;
+	String skin_texture;
 	
-	String get_text(int i)
+	String get_value(int i)
 	{
-		//text = "";
 		if (mode.equalsIgnoreCase("normal"))
 		{
 			if (values == null)
@@ -36,7 +36,7 @@ public class GUI_slider extends GenericSlider
 				value = Integer.toString(i);
 				//gui.replace_text();
 				gui.update_tooltips(name, value);
-				return original_text + value;
+				return value;
 			}
 			else
 			{
@@ -44,47 +44,52 @@ public class GUI_slider extends GenericSlider
 				{
 					value = "";
 					gui.update_tooltips(name, value);
-					return original_text + "nothing";
+					return "nothing";
 				}
 				else
 				{	
 					value = values.get(i);
 					gui.update_tooltips(name, value);
-					return original_text + value;
+					return value;
 				}
 			}
 		}
-		if (mode.equalsIgnoreCase("online_players"))
+		else if (mode.equalsIgnoreCase("online_players"))
 		{
 			if (i == max) 
 			{
 				value = "";
 				gui.update_tooltips(name, value);
-				return original_text + "no player";
+				return "no player";
 			}
 			else
 			{	
 				value = online_players.get(i).getName();
 				gui.update_tooltips(name, value);
-				return original_text + value;
+				return value;
 			}
 		}
-		if (mode.equalsIgnoreCase("offline_players"))
+		else if (mode.equalsIgnoreCase("offline_players"))
 		{
 			if (i == max)
 			{
 				value = "";
 				gui.update_tooltips(name, value);
-				return original_text + "no player";
+				return "no player";
 			}
 			else
 			{
 				value = offline_players.get(i).getName();
 				gui.update_tooltips(name, value);
-				return original_text + value;
+				return value;
 			}
 		}
-		return null;
+		return "";
+	}
+	
+	String get_full_text(int i)
+	{
+		return original_text + get_value(i);
 	}
 	
 	public GUI_slider(Map<String, Object> s, GUI gui) 
@@ -97,7 +102,8 @@ public class GUI_slider extends GenericSlider
 		name = s.containsKey("name") ? GUI_control.get_string(s.get("name")) : "";
 		String align = s.containsKey("align") ? GUI_control.get_string(s.get("align")) : "center";
 		original_text = s.containsKey("text") ? GUI_control.get_string(s.get("text")) + " " : "";
-		if (align.equalsIgnoreCase("left")) setAlign(WidgetAnchor.CENTER_LEFT);
+		skin_texture = s.containsKey("skin_texture") ? GUI_control.get_string(s.get("skin_texture")) : "";
+		if (align.equalsIgnoreCase("left")) setAlign(WidgetAnchor.CENTER_LEFT);		
 		else if (align.equalsIgnoreCase("center")) setAlign(WidgetAnchor.CENTER_CENTER);
 		else if (align.equalsIgnoreCase("right")) setAlign(WidgetAnchor.CENTER_RIGHT);
 		mode = s.containsKey("mode") ? GUI_control.get_string(s.get("mode")) : "normal";
@@ -133,7 +139,7 @@ public class GUI_slider extends GenericSlider
 		setTextColor(GUI_control.get_colour(colour));
 		setSliderPosition((float)def / max);
 		//setText(get_text(def));
-		text = get_text(def);
+		text = get_full_text(def);		
 		info = GUI_control.get_info(s.containsKey("info") ? GUI_control.get_string(s.get("info")) : "");
 		if (!info.equalsIgnoreCase("")) setTooltip(info);
 	}
@@ -141,8 +147,9 @@ public class GUI_slider extends GenericSlider
 	public void onSliderDrag(SliderDragEvent event)
 	{		
 		int i = (int) (event.getNewPosition() * max);
-		//setText(get_text(i));
-		text = get_text(i);
+		//setText(get_text(i));		
+		text = get_full_text(i);
+		if (!skin_texture.equalsIgnoreCase("") && !mode.equalsIgnoreCase("normal")) gui.update_texture(skin_texture, get_value(i));
 		gui.replace_text();
 	}
 }

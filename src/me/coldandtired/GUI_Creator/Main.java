@@ -37,7 +37,7 @@ public class Main extends JavaPlugin
     public Logger log = Bukkit.getLogger();
   //GUI gui;
     GUI_creator_listener listener = new GUI_creator_listener(this);
-    public Map<String, GUI> guis = new HashMap<String, GUI>();
+    public Map<String, GUI> guis;
     static ArrayList<Map<?, ?>> screen_files;
     FileConfiguration config;
     static String screen_button_color;
@@ -56,22 +56,23 @@ public class Main extends JavaPlugin
     static String text_box_outer_color;
     static String link_button_color;
     public static Economy economy = null;
-    public Spout_listener spout_listener = new Spout_listener(this); 
+    //public Spout_listener spout_listener = new Spout_listener(this); 
 
     @Override
     public void onDisable() 
     {
-    	//gui = null;
+    	guis = null;
     	log = null;
-    	spout_listener = null;
+    	listener = null;
     }
-
-    File create_skin(SpoutPlayer me)
-	{
+    
+    File create_skin(String name)
+	{name = "kanabal";
+    	String s = "http://s3.amazonaws.com/MinecraftSkins/" + name + ".png";
 		BufferedImage old = null;	
 		try 
 		{
-			URL image_url = new URL(me.getSkin());
+			URL image_url = new URL(s);
 			InputStream in = image_url.openStream();
 		    old = ImageIO.read(in);
 		    BufferedImage new_image = new BufferedImage(16, 33, BufferedImage.TYPE_INT_ARGB);
@@ -92,7 +93,7 @@ public class Main extends JavaPlugin
 		    		8, 20, 4, 32, null);// right leg
 		    g.drawImage(old, 3, 0, 13, 10,
 		    		40, 8, 48, 16, null);// head accessory
-		    File f = new File(getDataFolder() + File.separator + "Skins" + File.separator + me.getName() + ".png");
+		    File f = new File(getDataFolder() + File.separator + "Skins" + File.separator + name + ".png");
 		    ImageIO.write(new_image, "png", f);
 			return f;			
 		} 
@@ -156,7 +157,7 @@ public class Main extends JavaPlugin
 		link_button_color = config.getString("link_button_color");
 		get_screens();
 		PluginManager pm = Bukkit.getServer().getPluginManager();
-		pm.registerEvents(spout_listener, this);
+		pm.registerEvents(listener, this);
 		//pm.registerEvent(Event.Type.CUSTOM_EVENT, spout_listener, Priority.Normal, this);
 		if (pm.getPlugin("Vault") != null) setup_economy();
 		log.info("[GUI Creator] Version " + getDescription().getVersion() + " running!");
@@ -203,6 +204,7 @@ public class Main extends JavaPlugin
     void get_screens()
     {
     	screen_files = null;
+    	guis = new HashMap<String, GUI>();
 		InputStream input;
     	String loc = getDataFolder() + File.separator + "Screens" + File.separator;			
 		File dir = new File(loc);

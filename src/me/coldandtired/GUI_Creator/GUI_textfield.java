@@ -11,10 +11,12 @@ public class GUI_textfield extends GenericTextField
 	GUI gui;
 	String info;
 	String ph;
+	String skin_texture;
 	
 	GUI_textfield(Map<String, Object> t, GUI gui)
 	{
 		this.gui = gui;
+		skin_texture = t.containsKey("skin_texture") ? GUI_control.get_string(t.get("skin_texture")) : "";
 		name = t.containsKey("name") ? GUI_control.get_string(t.get("name")) : "";
 		setMaximumCharacters(100);
 		ph = t.containsKey("text") ? GUI_control.get_string(t.get("text")) : "";
@@ -25,12 +27,15 @@ public class GUI_textfield extends GenericTextField
 		borderColor = GUI_control.get_colour(outer_color);
 		info = GUI_control.get_info(t.containsKey("info") ? GUI_control.get_string(t.get("info")) : "");
 		if (!info.equalsIgnoreCase("")) setTooltip(info);
+		if (t.containsKey("password_box")) setPasswordField((Boolean)t.get("password_box"));
 	}
 	
 	@Override
 	public void onTextFieldChange(TextFieldChangeEvent event)
 	{
 		gui.replace_text();
-		gui.update_tooltips(name, event.getNewText());
+		String s = event.getNewText();
+		gui.update_tooltips(name, s);
+		if (!skin_texture.equalsIgnoreCase("")) gui.update_texture(skin_texture, s);
 	}
 }

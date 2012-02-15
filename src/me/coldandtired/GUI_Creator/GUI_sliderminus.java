@@ -25,7 +25,8 @@ public class GUI_sliderminus extends GenericButton
 				if (i >= 0)
 				{
 					slider.setSliderPosition((float)i / slider.max);
-					slider.text = slider.get_text(i);
+					slider.text = slider.get_full_text(i);
+					if (!slider.skin_texture.equalsIgnoreCase("")) gui.update_texture(slider.skin_texture, slider.get_value(i));
 					gui.replace_text();
 				}
 			}

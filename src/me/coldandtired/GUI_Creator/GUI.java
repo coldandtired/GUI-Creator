@@ -1,5 +1,7 @@
 package me.coldandtired.GUI_Creator;
 
+import java.io.File;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -77,7 +79,11 @@ public class GUI  extends GenericPopup
 		if (name.equalsIgnoreCase("gc_offline_player_count")) replacement = Integer.toString(me.getServer().getOfflinePlayers().length);
 		if (name.equalsIgnoreCase("gc_world_player_count")) replacement = Integer.toString(me.getWorld().getPlayers().size());
 
-		if (Main.economy != null && name.equalsIgnoreCase("gc_player_money")) replacement = Double.toString(Main.economy.getBalance(me.getName()));
+		if (Main.economy != null && name.equalsIgnoreCase("gc_player_money"))
+		{
+			DecimalFormat f = new DecimalFormat("#,###.##");
+			replacement = f.format(Main.economy.getBalance(me.getName()));
+		}
 		s = s.replace(sub, replacement);
 		s = s.trim();
 		s = s.replaceAll("  ", " ");
@@ -353,8 +359,26 @@ public class GUI  extends GenericPopup
 				GUI_radiobutton rb = (GUI_radiobutton)w;
 				if (rb.selected) rb.setSelected(true);
 			}
-		}		
+			if (w instanceof GUI_slider)
+			{
+				GUI_slider slider = (GUI_slider)w;
+				if (!slider.skin_texture.equalsIgnoreCase("") && !slider.mode.equalsIgnoreCase("normal")) 
+					update_texture(slider.skin_texture, slider.get_value((int) (slider.getSliderPosition()) * slider.max));
+			}
+		}	
 		replace_text();		
+	}
+	
+	void update_texture(String name, String player)
+	{
+		for (GUI_control g : sb.controls)
+		{
+			if (g.texture != null && g.texture.name.equalsIgnoreCase(name))
+			{
+				File f = new File(plugin.getDataFolder() + File.separator + "Skins" + File.separator + player + ".png");
+				if (f.exists()) g.texture.setUrl(f.getPath()); else g.texture.setUrl("");
+			}
+		}
 	}
 	
 	void fill_screen_area(int index)
@@ -440,7 +464,7 @@ public class GUI  extends GenericPopup
 	
 	@SuppressWarnings("unchecked")
 	GUI(Main plugin, SpoutPlayer me)
-	{	
+	{
 		this.fixed = true;
 		this.setAnchor(WidgetAnchor.SCALE);
 		this.me = me;
@@ -481,10 +505,10 @@ public class GUI  extends GenericPopup
 			reload_button.setText("/rgc").setWidth(30).setHeight(15).setX(3).setY(223);
 			attachWidget(plugin, reload_button);
     	}
-		
+		/*
 		int open = plugin.config.getInt("open_screen", -1);
 		
     	me.getMainScreen().attachPopupScreen(this);
-    	if (open > -1) jump_to_screen(open);
+    	if (open > -1) jump_to_screen(open);*/
 	}
 }
