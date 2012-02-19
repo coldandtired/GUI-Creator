@@ -37,11 +37,10 @@ public class GUI_creator_listener implements BindingExecutionDelegate, Listener
     			gui = new GUI(plugin, p);
     			plugin.guis.put(s, gui);
     		}
-    		int open = plugin.config.getInt("open_screen", -1);
+    		int open = Main.config.getInt("open_screen", -1);
     		
         	p.getMainScreen().attachPopupScreen(gui);
         	if (open > -1) gui.jump_to_screen(open);
-    		//plugin.guis.put(p.getName(), new GUI(plugin, p));
     	}
 	}
 
@@ -51,6 +50,8 @@ public class GUI_creator_listener implements BindingExecutionDelegate, Listener
 	@EventHandler
 	public void onPlayerJoin(PlayerJoinEvent event)
 	{		
+		if (!Main.make_skins) return;
+		
 		File f = plugin.create_skin(event.getPlayer().getName());
 		if (f != null)
 		{

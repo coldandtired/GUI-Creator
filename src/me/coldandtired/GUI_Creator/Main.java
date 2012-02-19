@@ -39,7 +39,7 @@ public class Main extends JavaPlugin
     GUI_creator_listener listener = new GUI_creator_listener(this);
     public Map<String, GUI> guis;
     static ArrayList<Map<?, ?>> screen_files;
-    FileConfiguration config;
+    static FileConfiguration config;
     static String screen_button_color;
     static String selected_button_color;
     static String command_button_color;
@@ -58,6 +58,8 @@ public class Main extends JavaPlugin
     static String combo_box_color;
     static String url_button_color;
     public static Economy economy = null;
+    static boolean make_skins = true;
+    
     //public Spout_listener spout_listener = new Spout_listener(this); 
 
     @Override
@@ -125,6 +127,7 @@ public class Main extends JavaPlugin
 		SpoutManager.getKeyBindingManager().registerBinding("gui_creator_open_gui", Keyboard.KEY_G, "Opens the GUI", listener, this);
 		config = getConfig();
 		config.addDefault("open_screen", -1);
+		config.addDefault("make_player_skins", true);
 		config.addDefault("selected_button_color", "120,50,120");
 		config.addDefault("screen_button_color", "150,150,150");
 		config.addDefault("command_button_color", "255,255,255");
@@ -161,6 +164,7 @@ public class Main extends JavaPlugin
 		text_box_inner_color = config.getString("text_box_inner_color");
 		text_box_outer_color = config.getString("text_box_outer_color");
 		link_button_color = config.getString("link_button_color");
+		make_skins = config.getBoolean("make_player_skins");
 		get_screens();
 		PluginManager pm = Bukkit.getServer().getPluginManager();
 		pm.registerEvents(listener, this);
