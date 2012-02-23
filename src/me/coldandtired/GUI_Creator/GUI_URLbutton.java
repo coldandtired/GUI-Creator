@@ -1,7 +1,5 @@
 package me.coldandtired.GUI_Creator;
 
-import java.awt.Desktop;
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -32,10 +30,11 @@ public class GUI_URLbutton extends GenericButton
 	
 	public void onButtonClick(ButtonClickEvent event) 
 	{
-		try 
-		{
-			Desktop.getDesktop().browse(java.net.URI.create(link));
-		} 
-		catch (IOException e) {}
+		
+		//try 
+		//{
+		//	Desktop.getDesktop().browse(java.net.URI.create(link));
+		//} 
+		//catch (IOException e) {}
 	}
 }

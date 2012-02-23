@@ -213,7 +213,6 @@ public class GUI  extends GenericPopup
 	
 	void fill_command_area(int screen, boolean hidden)
 	{	
-		//GUI_screen sb;
 		if (!hidden)
 		{
 			for (GUI_screen s : screens)
@@ -514,10 +513,10 @@ public class GUI  extends GenericPopup
 			reload_button.setText("/rgc").setWidth(30).setHeight(15).setX(3).setY(223);
 			attachWidget(plugin, reload_button);
     	}
-		/*
-		int open = plugin.config.getInt("open_screen", -1);
+		
+		int open = Main.config.getInt("open_screen", -1);
 		
     	me.getMainScreen().attachPopupScreen(this);
-    	if (open > -1) jump_to_screen(open);*/
+    	if (open > -1) jump_to_screen(open);
 	}
 }

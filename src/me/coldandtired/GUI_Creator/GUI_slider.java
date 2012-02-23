@@ -2,10 +2,11 @@ package me.coldandtired.GUI_Creator;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.getspout.spoutapi.event.screen.SliderDragEvent;
@@ -20,6 +21,7 @@ public class GUI_slider extends GenericSlider
 	String mode;
 	List<Player> online_players;
 	List<OfflinePlayer> offline_players;
+	List<String> items;
 	String value = "";
 	GUI gui;
 	List<String> values;
@@ -69,7 +71,7 @@ public class GUI_slider extends GenericSlider
 				return value;
 			}
 		}
-		else if (mode.equalsIgnoreCase("offline_players"))
+		else if (mode.equalsIgnoreCase("offline_players") || mode.equalsIgnoreCase("banned_players"))
 		{
 			if (i == max)
 			{
@@ -80,6 +82,21 @@ public class GUI_slider extends GenericSlider
 			else
 			{
 				value = offline_players.get(i).getName();
+				gui.update_tooltips(name, value);
+				return value;
+			}
+		}
+		else if (mode.equalsIgnoreCase("all_items"))
+		{
+			if (i == max) 
+			{
+				value = "";
+				gui.update_tooltips(name, value);
+				return "no item";
+			}
+			else
+			{	
+				value = items.get(i);
 				gui.update_tooltips(name, value);
 				return value;
 			}
@@ -108,19 +125,7 @@ public class GUI_slider extends GenericSlider
 		else if (align.equalsIgnoreCase("right")) setAlign(WidgetAnchor.CENTER_RIGHT);
 		mode = s.containsKey("mode") ? GUI_control.get_string(s.get("mode")) : "normal";
 		Object o = s.containsKey("default") ? s.get("default") : null;
-		int def = o instanceof Integer ? (Integer)o : 50; 
-		if (mode.equalsIgnoreCase("online_players"))
-		{
-			online_players = Arrays.asList(Bukkit.getOnlinePlayers());
-			max = online_players.size();
-			def = online_players.indexOf(gui.me);
-		}
-		if (mode.equalsIgnoreCase("offline_players"))
-		{
-			offline_players = Arrays.asList(Bukkit.getServer().getOfflinePlayers());
-			max = offline_players.size();
-			def = offline_players.indexOf(gui.me);
-		}
+		int def = o instanceof Integer ? (Integer)o : 50;
 		if (mode.equalsIgnoreCase("normal"))
 		{
 			String temp = s.containsKey("values") ? ((String)s.get("values")).replaceAll(" ", "") : "";			
@@ -133,12 +138,38 @@ public class GUI_slider extends GenericSlider
 				if (o instanceof Integer) def--;
 			}
 		}
+		else if (mode.equalsIgnoreCase("online_players"))
+		{
+			online_players = Arrays.asList(Bukkit.getOnlinePlayers());
+			max = online_players.size();
+			def = online_players.indexOf(gui.me);
+		}
+		else if (mode.equalsIgnoreCase("offline_players"))
+		{
+			offline_players = Arrays.asList(Bukkit.getServer().getOfflinePlayers());
+			max = offline_players.size();
+			def = 0;
+		}
+		else if (mode.equalsIgnoreCase("banned_players"))
+		{
+			offline_players = new ArrayList<OfflinePlayer>(Bukkit.getServer().getBannedPlayers());
+			max = offline_players.size();
+			def = 0;
+		}
+		else if (mode.equalsIgnoreCase("all_items"))
+		{
+			items = new ArrayList<String>();
+			for (Material m : Material.values()) items.add(m.name().toLowerCase());
+			Collections.sort(items);
+			max = items.size();
+			def = 0;
+		}
+		
 		if (def > max) def = max;
 		if (def < 0) def = 0;
 		String colour = s.containsKey("text_color") ? GUI_control.get_string(s.get("text_color")) : Main.slider_color;
 		setTextColor(GUI_control.get_colour(colour));
 		setSliderPosition((float)def / max);
-		//setText(get_text(def));
 		text = get_full_text(def);		
 		info = GUI_control.get_info(s.containsKey("info") ? GUI_control.get_string(s.get("info")) : "");
 		if (!info.equalsIgnoreCase("")) setTooltip(info);

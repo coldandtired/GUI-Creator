@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.getspout.spoutapi.event.screen.ButtonClickEvent;
 import org.getspout.spoutapi.gui.GenericButton;
+import org.getspout.spoutapi.gui.WidgetAnchor;
 
 public class GUI_button extends GenericButton
 {
@@ -16,6 +17,7 @@ public class GUI_button extends GenericButton
 	List<String> permissions;
 	int cost;
 	String text;
+	boolean confirm_command;
 	
 	@SuppressWarnings("unchecked")
 	GUI_button(Map<String, Object> b, GUI gui)
@@ -37,6 +39,7 @@ public class GUI_button extends GenericButton
 		text = b.containsKey("text") ? GUI_control.get_string(b.get("text")) : "button";
 		setText(text);
 		stay_open = b.containsKey("stay_open") ? (Boolean)b.get("stay_open") : false;
+		confirm_command = b.containsKey("confirm_command") ? (Boolean)b.get("confirm_command") : false;
 		command = b.containsKey("command") ? GUI_control.get_string(b.get("command")) : "";
 		info = GUI_control.get_info(b.containsKey("info") ? GUI_control.get_string(b.get("info")) : "");
 		if (!info.equalsIgnoreCase("")) setTooltip(info);
@@ -50,6 +53,18 @@ public class GUI_button extends GenericButton
 		if (!stay_open) gui.close();
 		if (cost != 0 && Main.economy != null) Main.economy.withdrawPlayer(gui.me.getName(), cost);
 		String[] commands = s.split(";");
-		for (String s2 : commands) gui.me.chat(s2);
+		for (String s2 : commands)
+		{
+			if (!confirm_command) gui.me.chat(s2);
+			else
+			{
+				GUI_confirmationbox cb = new GUI_confirmationbox(gui.plugin, s2);
+				cb.setHeight(80).setWidth(227).setX(100).setY(80);
+				cb.setFixed(true);
+				cb.setAnchor(WidgetAnchor.SCALE);
+				cb.setBgVisible(false);
+				gui.me.getMainScreen().attachPopupScreen(cb);
+			 }
+		}
 	}
 }

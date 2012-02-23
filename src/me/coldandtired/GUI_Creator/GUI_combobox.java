@@ -2,11 +2,13 @@ package me.coldandtired.GUI_Creator;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.getspout.spoutapi.gui.GenericComboBox;
@@ -52,7 +54,7 @@ public class GUI_combobox extends GenericComboBox
 			this.setItems(temp);
 		}
 		
-		if (mode.equalsIgnoreCase("online_players"))
+		else if (mode.equalsIgnoreCase("online_players"))
 		{
 			items = new HashMap<String, String>();
 			List<String> temp = new ArrayList<String>();
@@ -66,7 +68,7 @@ public class GUI_combobox extends GenericComboBox
 			items.put("No player", "");
 			this.setItems(temp);
 		}
-		if (mode.equalsIgnoreCase("offline_players"))
+		else if (mode.equalsIgnoreCase("offline_players"))
 		{
 			items = new HashMap<String, String>();
 			List<String> temp = new ArrayList<String>();
@@ -79,7 +81,36 @@ public class GUI_combobox extends GenericComboBox
 			temp.add("No player");
 			items.put("No player", "");
 			this.setItems(temp);
-		}		
+		}	
+		else if (mode.equalsIgnoreCase("banned_players"))
+		{
+			items = new HashMap<String, String>();
+			List<String> temp = new ArrayList<String>();
+			for (OfflinePlayer p : Bukkit.getServer().getBannedPlayers())
+			{
+				String s = p.getName();
+				temp.add(s);
+				items.put(s, s);
+			}
+			temp.add("No player");
+			items.put("No player", "");
+			this.setItems(temp);
+		}
+		else if (mode.equalsIgnoreCase("all_items"))
+		{
+			items = new HashMap<String, String>();
+			List<String> temp = new ArrayList<String>();
+			for (Material m : Material.values())
+			{
+				String s = m.name().toLowerCase();
+				temp.add(s);
+				items.put(s, s);
+			}
+			Collections.sort(temp);
+			temp.add("No item");
+			items.put("No item", "");
+			this.setItems(temp);
+		}
 	}
 	
 	public void onSelectionChanged(int i, String text) 
