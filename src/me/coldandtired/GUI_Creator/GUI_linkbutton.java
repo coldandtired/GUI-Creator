@@ -13,8 +13,9 @@ public class GUI_linkbutton extends GenericButton
 	String info;
 	int link;
 	String text;
+	String[] link_params;
 	
-	GUI_linkbutton(Map<String, Object> lb, GUI gui)
+ 	GUI_linkbutton(Map<String, Object> lb, GUI gui)
 	{
 		this.gui = gui;
 		String text_colour = lb.containsKey("text_color") ? GUI_control.get_string(lb.get("text_color")) : Main.link_button_color;
@@ -23,13 +24,14 @@ public class GUI_linkbutton extends GenericButton
 		setHoverColor(GUI_control.get_colour(hover_colour));
 		text = lb.containsKey("text") ? GUI_control.get_string(lb.get("text")) : "button";
 		setText(text);
-		link = lb.containsKey("link_to") ? (Integer)lb.get("link_to") : -2;
+		link_params = lb.containsKey("link_to") ? GUI_control.get_string(lb.get("link_to")).split(" ") : null;
+		link = link_params != null ? Integer.parseInt(link_params[0]) : -2;
 		info = GUI_control.get_info(lb.containsKey("info") ? GUI_control.get_string(lb.get("info")) : "");
 		if (!info.equalsIgnoreCase("")) setTooltip(info);
 	}
 	
 	public void onButtonClick(ButtonClickEvent event) 
 	{
-		gui.jump_to_screen(link);
+		gui.jump_to_screen(link, link_params);
 	}
 }

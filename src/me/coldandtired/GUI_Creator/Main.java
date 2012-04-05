@@ -35,7 +35,6 @@ import org.yaml.snakeyaml.Yaml;
 public class Main extends JavaPlugin
 {
     public Logger log = Bukkit.getLogger();
-  //GUI gui;
     GUI_creator_listener listener = new GUI_creator_listener(this);
     public Map<String, GUI> guis;
     static ArrayList<Map<?, ?>> screen_files;
@@ -59,8 +58,6 @@ public class Main extends JavaPlugin
     static String url_button_color;
     public static Economy economy = null;
     static boolean make_skins = true;
-    
-    //public Spout_listener spout_listener = new Spout_listener(this); 
 
     @Override
     public void onDisable() 
@@ -127,6 +124,8 @@ public class Main extends JavaPlugin
 		SpoutManager.getKeyBindingManager().registerBinding("gui_creator_open_gui", Keyboard.KEY_G, "Opens the GUI", listener, this);
 		config = getConfig();
 		config.addDefault("open_screen", -1);
+		config.addDefault("ignore_open_permission", false);
+		config.addDefault("ignore_reload_permission", false);
 		config.addDefault("make_player_skins", true);
 		config.addDefault("selected_button_color", "120,50,120");
 		config.addDefault("screen_button_color", "150,150,150");
@@ -168,7 +167,6 @@ public class Main extends JavaPlugin
 		get_screens();
 		PluginManager pm = Bukkit.getServer().getPluginManager();
 		pm.registerEvents(listener, this);
-		//pm.registerEvent(Event.Type.CUSTOM_EVENT, spout_listener, Priority.Normal, this);
 		if (pm.getPlugin("Vault") != null) setup_economy();
 		log.info("[GUI Creator] Version " + getDescription().getVersion() + " running!");
 	}
@@ -239,11 +237,15 @@ public class Main extends JavaPlugin
     public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args)
 	{    	
 		if(cmd.getName().equalsIgnoreCase("reload_GUI_creator") && args.length == 0)
-		{
-			if (sender instanceof Player && !sender.hasPermission("gui_creator.can_reload_screens"))
+		{			
+			if (sender instanceof Player)
 			{
-				sender.sendMessage(ChatColor.RED + "[GUI Creator] You don't have permission to reload the screens!");
-				return true;
+				boolean rl = config.getBoolean("ignore_reload_permission", false) ? sender.isOp() : sender.hasPermission("gui_creator.can_reload_screens");
+				if (!rl)
+				{
+					sender.sendMessage(ChatColor.RED + "[GUI Creator] You don't have permission to reload the screens!");
+					return true;
+				}
 			}
 			get_screens();
 			log.info("[GUI Creator] Screen files reloaded!");
@@ -251,19 +253,20 @@ public class Main extends JavaPlugin
 			return true;
 		}
 		
-		if(cmd.getName().equalsIgnoreCase("open_screen") && args.length < 2)
+		if(cmd.getName().equalsIgnoreCase("open_screen"))
 		{
 			if (!(sender instanceof Player))
 			{
 				sender.sendMessage(ChatColor.RED + "[GUI Creator] This command can only be used by a player!");
 				return true;
 			}
-			
-			if (!sender.hasPermission("gui_creator.can_open_gui"))
+			boolean show = config.getBoolean("ignore_open_permission", false) ? sender.isOp() : sender.hasPermission("gui_creator.can_open_gui");
+			if (!show)
 			{
 				sender.sendMessage(ChatColor.RED + "[GUI Creator] You don't have permission to view the GUI!");
 				return true;
 			}
+			
 			SpoutPlayer p;
 	    	if (sender instanceof SpoutPlayer) p = (SpoutPlayer)sender; else return true;
 			if (!p.isSpoutCraftEnabled() || Main.screen_files == null) return true;
@@ -272,7 +275,7 @@ public class Main extends JavaPlugin
 			if (args.length == 0) return true;
 			else
 			{
-				gui.jump_to_screen(Integer.parseInt(args[0]));
+				gui.jump_to_screen(Integer.parseInt(args[0]), args);
 			}
 		}
 		return false;

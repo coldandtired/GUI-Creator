@@ -26,6 +26,7 @@ public class GUI  extends GenericPopup
 	Main plugin;
 	SpoutPlayer me;
 	GUI_screen sb;
+	String[] params;
 	
 	String replace_params(String s, String n, String text)
 	{
@@ -84,6 +85,17 @@ public class GUI  extends GenericPopup
 			DecimalFormat f = new DecimalFormat("#,###.##");
 			replacement = f.format(Main.economy.getBalance(me.getName()));
 		}
+		
+		if (params != null && params.length > 0)
+		{
+			if (name.startsWith("gc_param_"))
+			{
+				String s2 = name.substring(name.length() -1);
+				int i = Integer.parseInt(s2);
+				if (params.length >= i) replacement = params[i - 1];
+			}
+		}
+		
 		s = s.replace(sub, replacement);
 		s = s.trim();
 		s = s.replaceAll("  ", " ");
@@ -105,21 +117,28 @@ public class GUI  extends GenericPopup
 			if (w instanceof GUI_button)
 			{
 				GUI_button bt = (GUI_button)w; 
-				String s = bt.command;
-				if (s.contains("^")) while (s.contains("^"))  s = replace_params(s, name, text);
+				String s = "";
+				
+				if (!bt.hide_command)
+				{
+					s = bt.command;
+					if (s.contains("^")) while (s.contains("^"))  s = replace_params(s, name, text);
+				}
+				
 				if (!bt.info.equalsIgnoreCase(""))
 				{
 					String s2 = bt.info;
 					while (s2.contains("^")) s2 = replace_params(s2, "", "");
 					s = s2 + "\n" + s;
 				}
+				
 				if (s.contains(";"))
 				{					
 					String[] lines = s.split(";");
 					s = "";
 					for (String s2 : lines)	s = s + s2 + "\n";
 				}
-				bt.setTooltip(s);
+				if (!s.equalsIgnoreCase("")) bt.setTooltip(s);
 			}
 		}
 	}	
@@ -207,8 +226,6 @@ public class GUI  extends GenericPopup
 			}
 		}
 		update_tooltips("", "");
-	//	this.setDirty(true);
-		
 	}
 	
 	void fill_command_area(int screen, boolean hidden)
@@ -420,8 +437,14 @@ public class GUI  extends GenericPopup
     	}
 	}
 	
-	void jump_to_screen(int id)
+	void jump_to_screen(int id, String[] params)
 	{
+		if (params != null && params.length > 1)
+		{
+			this.params = new String[params.length -1];
+			for (int i = 1; i < params.length; i++) this.params[i -1] = params[i];
+		} else this.params = null;
+				
 		for (GUI_screen g : screens)
 		{
 			if (g.id == id) 
@@ -472,11 +495,11 @@ public class GUI  extends GenericPopup
 	
 	@SuppressWarnings("unchecked")
 	GUI(Main plugin, SpoutPlayer me)
-	{
-		this.fixed = true;
-		this.setAnchor(WidgetAnchor.SCALE);
+	{		
+		fixed = true;
+		setAnchor(WidgetAnchor.SCALE);
 		this.me = me;
-		this.setBgVisible(false);
+		setTransparent(true);
 		this.plugin = plugin;
 		for (Map<?, ?> map : Main.screen_files)
 		{
@@ -515,8 +538,9 @@ public class GUI  extends GenericPopup
     	}
 		
 		int open = Main.config.getInt("open_screen", -1);
+		String[] params = Main.config.getString("open_params", "").split(" ");
 		
     	me.getMainScreen().attachPopupScreen(this);
-    	if (open > -1) jump_to_screen(open);
+    	if (open > -1) jump_to_screen(open, params);
 	}
 }

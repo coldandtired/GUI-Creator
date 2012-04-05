@@ -18,6 +18,7 @@ public class GUI_button extends GenericButton
 	int cost;
 	String text;
 	boolean confirm_command;
+	boolean hide_command;
 	
 	@SuppressWarnings("unchecked")
 	GUI_button(Map<String, Object> b, GUI gui)
@@ -40,6 +41,7 @@ public class GUI_button extends GenericButton
 		setText(text);
 		stay_open = b.containsKey("stay_open") ? (Boolean)b.get("stay_open") : false;
 		confirm_command = b.containsKey("confirm_command") ? (Boolean)b.get("confirm_command") : false;
+		hide_command = b.containsKey("hide_command") ? (Boolean)b.get("hide_command") : false;
 		command = b.containsKey("command") ? GUI_control.get_string(b.get("command")) : "";
 		info = GUI_control.get_info(b.containsKey("info") ? GUI_control.get_string(b.get("info")) : "");
 		if (!info.equalsIgnoreCase("")) setTooltip(info);
