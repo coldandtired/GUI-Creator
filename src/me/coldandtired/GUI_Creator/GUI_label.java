@@ -15,6 +15,7 @@ public class GUI_label extends GenericLabel
 		setTextColor(GUI_control.get_colour(colour));
 		text = t.containsKey("text") ? GUI_control.get_string(t.get("text")) : "text_label";
 		setText(text);
+		shadow = t.containsKey("has_shadow") ? (Boolean)t.get("has_shadow") : true;
 		align = t.containsKey("align") ? GUI_control.get_string(t.get("align")) : "center";
 	}
 }

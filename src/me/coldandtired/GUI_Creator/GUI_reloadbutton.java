@@ -21,6 +21,6 @@ public class GUI_reloadbutton extends GenericButton
 		plugin.get_screens();
 		plugin.log.info("[GUI Creator] Screen files reloaded!");
 		p.sendMessage(ChatColor.GREEN + "[GUI Creator] Screen files reloaded!");
-		plugin.guis.put(p.getName(), new GUI(plugin, p));
+		//plugin.guis.put(p.getName(), new GUI(plugin, p));
 	}
 }

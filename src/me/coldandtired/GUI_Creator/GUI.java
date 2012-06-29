@@ -80,6 +80,28 @@ public class GUI  extends GenericPopup
 		if (name.equalsIgnoreCase("gc_offline_player_count")) replacement = Integer.toString(me.getServer().getOfflinePlayers().length);
 		if (name.equalsIgnoreCase("gc_world_player_count")) replacement = Integer.toString(me.getWorld().getPlayers().size());
 
+		if (name.equalsIgnoreCase("gc_item_in_hand_name")) replacement = me.getItemInHand().getType().name();
+		if (name.equalsIgnoreCase("gc_item_in_hand_id")) replacement = Integer.toString(me.getItemInHand().getTypeId());
+		if (name.equalsIgnoreCase("gc_item_in_hand_data")) replacement = Integer.toString(me.getItemInHand().getData().getData());
+		if (name.equalsIgnoreCase("gc_item_in_hand_amount")) replacement = Integer.toString(me.getItemInHand().getAmount());
+		if (name.equalsIgnoreCase("gc_gamemode")) replacement = me.getGameMode().name();
+		if (name.equalsIgnoreCase("gc_hp")) replacement = Integer.toString(me.getHealth());
+		if (name.equalsIgnoreCase("gc_max_hp")) replacement = Integer.toString(me.getMaxHealth());
+		if (name.equalsIgnoreCase("gc_food_level")) replacement = Integer.toString(me.getFoodLevel());
+		if (name.equalsIgnoreCase("gc_level_exp"))
+		{
+			int i = (int) (me.getExp() * 100);
+			replacement = Integer.toString(i);
+		}
+		if (name.equalsIgnoreCase("gc_total_exp")) replacement = Integer.toString(me.getTotalExperience());
+		if (name.equalsIgnoreCase("gc_level")) replacement = Integer.toString(me.getLevel());
+		if (name.equalsIgnoreCase("gc_air")) replacement = Integer.toString(me.getRemainingAir());
+		if (name.equalsIgnoreCase("gc_max_air")) replacement = Integer.toString(me.getMaximumAir());
+		if (name.equalsIgnoreCase("gc_title")) replacement = me.getTitle();
+		if (name.equalsIgnoreCase("gc_display_name")) replacement = me.getDisplayName();
+		if (name.equalsIgnoreCase("gc_list_name")) replacement = me.getPlayerListName();
+				
+		//item slots?
 		if (Main.economy != null && name.equalsIgnoreCase("gc_player_money"))
 		{
 			DecimalFormat f = new DecimalFormat("#,###.##");

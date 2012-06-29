@@ -32,14 +32,14 @@ public class GUI_creator_listener implements BindingExecutionDelegate, Listener
 		{
 			if (p.getActiveScreen() == ScreenType.GAME_SCREEN || (p.getActiveScreen() == ScreenType.CUSTOM_SCREEN && p.getMainScreen().getActivePopup() == null))
 			{
-				String s = p.getName();
-				GUI gui;
-				if (plugin.guis.containsKey(s)) gui =  plugin.guis.get(s);
-				else
-				{
-					gui = new GUI(plugin, p);
-    				plugin.guis.put(s, gui);
-				}
+				//String s = p.getName();
+				GUI gui = new GUI(plugin, p);
+				//if (plugin.guis.containsKey(s)) gui =  plugin.guis.get(s);
+				//else
+				//{
+				///	gui = new GUI(plugin, p);
+    			//	plugin.guis.put(s, gui);
+				//}
 				String[] params = Main.config.contains("open_screen") ? 
 						GUI_control.get_string(Main.config.get("open_screen")).split(" ") : null;
 				int open = params != null ? Integer.parseInt(params[0]) : -2;

@@ -10,11 +10,16 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
 import javax.imageio.ImageIO;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathFactory;
 
 import net.milkbowl.vault.economy.Economy;
 
@@ -27,17 +32,21 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.fusesource.jansi.Ansi;
+import org.fusesource.jansi.AnsiConsole;
 import org.getspout.spoutapi.SpoutManager;
 import org.getspout.spoutapi.keyboard.Keyboard;
 import org.getspout.spoutapi.player.SpoutPlayer;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import org.yaml.snakeyaml.Yaml;
 
 public class Main extends JavaPlugin
 {
     public Logger log = Bukkit.getLogger();
     GUI_creator_listener listener = new GUI_creator_listener(this);
-    public Map<String, GUI> guis;
-    static ArrayList<Map<?, ?>> screen_files;
+   // public Map<String, GUI> guis;
+    static List<Map<?, ?>> screen_files;
     static FileConfiguration config;
     static String screen_button_color;
     static String selected_button_color;
@@ -59,12 +68,47 @@ public class Main extends JavaPlugin
     public static Economy economy = null;
     static boolean make_skins = true;
 
+    boolean is_latest_version()
+	{
+		DocumentBuilder dbf;
+		try 
+		{
+			dbf = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+			Document doc = dbf.parse("http://dev.bukkit.org/server-mods/gui-creator/files.rss");
+			XPath xpath = XPathFactory.newInstance().newXPath();
+			String s = ((Element) xpath.evaluate("//item[1]/title", doc, XPathConstants.NODE)).getTextContent();
+			return (s.equalsIgnoreCase(getDescription().getVersion()));
+		} 
+		catch (Exception e) {return true;}		
+	}
+    
+    
     @Override
     public void onDisable() 
     {
-    	guis = null;
+    //	guis = null;
     	log = null;
     	listener = null;
+    	screen_files = null;
+        config = null;
+        screen_button_color = null;
+        selected_button_color = null;
+        command_button_color = null;
+        button_hover_color = null;
+        background_color = null;
+        gradient_top_color = null;
+        gradient_bottom_color = null;
+        spacer_color = null;
+        label_color = null;
+        check_box_color = null;
+        radio_button_color = null;
+        slider_color = null;
+        text_box_inner_color = null;
+        text_box_outer_color = null;
+        link_button_color = null;
+        combo_box_color = null;
+        url_button_color = null;
+        economy = null;
     }
     
     File create_skin(String name)
@@ -105,6 +149,18 @@ public class Main extends JavaPlugin
     @Override
     public void onEnable() 
     { 	
+    	if (!is_latest_version()) getLogger().info("There's a new version of GUI Creator available!");
+    	
+    	try 
+		{
+		    Metrics metrics = new Metrics(this);
+		    metrics.start();
+		} 
+		catch (IOException e) 
+		{
+		    getLogger().warning("Something went wrong with Metrics - it will be disabled.");
+		}
+    	
     	File f = new File(getDataFolder() + File.separator + "config.yml");
 		if (!f.exists())
 		{
@@ -121,7 +177,7 @@ public class Main extends JavaPlugin
 		if (!f.exists()) f.mkdir();
 		
 		make_example();
-		SpoutManager.getKeyBindingManager().registerBinding("gui_creator_open_gui", Keyboard.KEY_G, "Opens the GUI", listener, this);
+		SpoutManager.getKeyBindingManager().registerBinding("gui_creator_show_gui", Keyboard.KEY_C, "Shows the GUI", listener, this);
 		config = getConfig();
 		config.addDefault("open_screen", -1);
 		config.addDefault("ignore_open_permission", false);
@@ -212,7 +268,7 @@ public class Main extends JavaPlugin
     void get_screens()
     {
     	screen_files = null;
-    	guis = new HashMap<String, GUI>();
+    	//guis = new HashMap<String, GUI>();
 		InputStream input;
     	String loc = getDataFolder() + File.separator + "Screens" + File.separator;			
 		File dir = new File(loc);
@@ -222,21 +278,44 @@ public class Main extends JavaPlugin
 		screen_files = new ArrayList<Map<?, ?>>();
 		
 		for (int i = 0; i < children.length; i++)
-		{			
+		{	
 			try 
 			{
 				input = new FileInputStream(new File(loc + children[i]));
-				Yaml yaml = new Yaml();
-				Map<?, ?> a = (Map<?, ?>)yaml.load(input);
-				screen_files.add(a);
-			} 
+				try 
+				{
+					Yaml yaml = new Yaml();
+					Map<?, ?> a = (Map<?, ?>)yaml.load(input);
+					screen_files.add(a);
+				}
+				finally
+				{
+					 try 
+					 {
+						 input.close();
+					 }
+					 catch (IOException e) {e.printStackTrace();}
+				}
+			}
 			catch (FileNotFoundException e) {e.printStackTrace();}
 		}		
     }
     
     public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args)
 	{    	
-		if(cmd.getName().equalsIgnoreCase("reload_GUI_creator") && args.length == 0)
+    	if (cmd.getName().equalsIgnoreCase("gctest"))
+    	{
+    		if (sender.isOp())
+    		{
+    			getLogger().info(Ansi.ansi().fg(Ansi.Color.GREEN).bold().toString() + "Test 1"
+    					+ Ansi.ansi().fg(Ansi.Color.WHITE).bold().toString());
+    			AnsiConsole.out.println(Ansi.ansi().fg(Ansi.Color.YELLOW).bold().toString() +"test 2"
+    					+ Ansi.ansi().fg(Ansi.Color.WHITE).bold().toString());
+    		}
+    		return true;
+    	}
+    	
+		if (cmd.getName().equalsIgnoreCase("reload_GUI_creator") && args.length == 0)
 		{			
 			if (sender instanceof Player)
 			{
@@ -271,7 +350,7 @@ public class Main extends JavaPlugin
 	    	if (sender instanceof SpoutPlayer) p = (SpoutPlayer)sender; else return true;
 			if (!p.isSpoutCraftEnabled() || Main.screen_files == null) return true;
 			GUI gui = new GUI(this, p);
-	    	guis.put(p.getName(), gui);	
+	    	//guis.put(p.getName(), gui);	
 			if (args.length == 0) return true;
 			else
 			{
