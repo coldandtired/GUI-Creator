@@ -200,6 +200,10 @@ public class Main extends JavaPlugin
 		config.addDefault("text_box_inner_color", "0,0,0,255");
 		config.addDefault("text_box_outer_color", "159,159,159,255");
 		config.addDefault("link_button_color", "255,255,255");
+		config.addDefault("confirm_title", "Confirm command!");
+		config.addDefault("confirm_text", "Are you sure?");
+		config.addDefault("confirm_yes", "Yes");
+		config.addDefault("confirm_no", "No");
 		config.options().copyDefaults(true);
 		saveConfig();
 		selected_button_color = config.getString("selected_button_color");
@@ -268,7 +272,6 @@ public class Main extends JavaPlugin
     void get_screens()
     {
     	screen_files = null;
-    	//guis = new HashMap<String, GUI>();
 		InputStream input;
     	String loc = getDataFolder() + File.separator + "Screens" + File.separator;			
 		File dir = new File(loc);
@@ -279,6 +282,8 @@ public class Main extends JavaPlugin
 		
 		for (int i = 0; i < children.length; i++)
 		{	
+			String s = children[i].substring(children[i].length() - 3);
+			if (s.equalsIgnoreCase("yml") || s.equalsIgnoreCase("txt"))
 			try 
 			{
 				input = new FileInputStream(new File(loc + children[i]));

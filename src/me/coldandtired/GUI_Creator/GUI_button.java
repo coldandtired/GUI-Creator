@@ -60,7 +60,7 @@ public class GUI_button extends GenericButton
 			if (!confirm_command) gui.me.chat(s2);
 			else
 			{
-				GUI_confirmationbox cb = new GUI_confirmationbox(gui.plugin, s2);
+				GUI_confirmationbox cb = new GUI_confirmationbox(gui.plugin, s2, hide_command);
 				cb.setHeight(80).setWidth(227).setX(100).setY(80);
 				cb.setFixed(true);
 				cb.setAnchor(WidgetAnchor.SCALE);
