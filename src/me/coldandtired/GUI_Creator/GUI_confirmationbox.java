@@ -12,7 +12,7 @@ public class GUI_confirmationbox extends GenericPopup
 	GUI_confirmbutton confirm_button;
 	GUI_closebutton cancel_button;
 	
-	GUI_confirmationbox(Main plugin, String command, boolean hide_command)
+	GUI_confirmationbox(Main plugin, String command, boolean hide_command, boolean use_console)
 	{
 		Gradient gg = new GenericGradient();
 		gg.setX(100).setY(80).setHeight(80).setWidth(227);
@@ -30,7 +30,7 @@ public class GUI_confirmationbox extends GenericPopup
 		lb3.setX(178).setY(144).setHeight(10).setWidth(127);
 		lb3.setText( Main.config.getString("confirm_text"));
 		lb3.setTextColor(new Color(255,0,0));
-		confirm_button = new GUI_confirmbutton(command);
+		confirm_button = new GUI_confirmbutton(command, use_console);
 		confirm_button.setX(103).setY(138).setHeight(20).setWidth(50);
 		confirm_button.setText(Main.config.getString("confirm_yes"));
 		cancel_button = new GUI_closebutton();

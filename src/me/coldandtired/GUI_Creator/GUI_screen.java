@@ -22,6 +22,7 @@ public class GUI_screen extends GenericButton
 	int id;
 	boolean hidden;
 	String show_permission;
+	String hide_permission;
 	int show_funds;
 	String text;
 	String info;
@@ -32,6 +33,7 @@ public class GUI_screen extends GenericButton
 		this.gui = gui;		
 		this.index = index;
 		show_permission = sb.containsKey("show_permission") ? ((String)sb.get("show_permission")).toLowerCase() : "";
+		hide_permission = sb.containsKey("hide_permission") ? ((String)sb.get("hide_permission")).toLowerCase() : "";
 		show_funds = sb.containsKey("show_funds") ? (Integer)sb.get("show_funds") : 0;
 		row_height = sb.containsKey("row_height") ? (Integer)sb.get("row_height") : 18;
 		hidden = sb.containsKey("hidden") ? (Boolean)sb.get("hidden") : false;
@@ -67,6 +69,11 @@ public class GUI_screen extends GenericButton
 				{
 					Permission p = new Permission(((String)g.get("show_permission")).toLowerCase());
 					if (gui.me.hasPermission(p)) show = true; else show = false;
+				}
+				if (g.containsKey("hide_permission"))
+				{
+					Permission p = new Permission(((String)g.get("hide_permission")).toLowerCase());
+					if (gui.me.hasPermission(p)) show = false; else show = true;
 				}
 				if (show) controls.add(new GUI_control(g, gui)); 
 			}

@@ -540,6 +540,12 @@ public class GUI  extends GenericPopup
 					if (me.hasPermission(p)) show = true;
 					else show = false;
 				}	
+				if (b.get(i).containsKey("hide_permission"))
+				{
+					Permission p = new Permission(b.get(i).get("hide_permission").toString().toLowerCase());
+					if (me.hasPermission(p)) show = false;
+					else show = true;
+				}
 				if (b.get(i).containsKey("hidden")) show = false;
 				if (show) screens.add(new GUI_screen(b.get(i), this, i)); else hidden_screens.add(new GUI_screen(b.get(i), this, i));
 			}

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.bukkit.Bukkit;
 import org.getspout.spoutapi.event.screen.ButtonClickEvent;
 import org.getspout.spoutapi.gui.GenericButton;
 import org.getspout.spoutapi.gui.WidgetAnchor;
@@ -14,6 +15,7 @@ public class GUI_button extends GenericButton
 	GUI gui;
 	String info;
 	boolean stay_open;
+	boolean use_console;
 	List<String> permissions;
 	int cost;
 	String text;
@@ -32,6 +34,8 @@ public class GUI_button extends GenericButton
 				permissions.add(s.toLowerCase());
 			}					
 		}
+
+		use_console = b.containsKey("use_console") ? (Boolean)b.get("use_console") : false;
 		cost = b.containsKey("cost") ? (Integer)b.get("cost") : 0;
 		String text_colour = b.containsKey("text_color") ? GUI_control.get_string(b.get("text_color")) : Main.command_button_color;
 		setColor(GUI_control.get_colour(text_colour));
@@ -57,10 +61,18 @@ public class GUI_button extends GenericButton
 		String[] commands = s.split(";");
 		for (String s2 : commands)
 		{
-			if (!confirm_command) gui.me.chat(s2);
+			if (!confirm_command)
+			{
+				if (use_console)
+				{
+					if (s2.startsWith("/")) s2 = s2.substring(1);
+					Bukkit.dispatchCommand(Bukkit.getConsoleSender(), s2);
+				}
+				else gui.me.chat(s2);
+			}
 			else
 			{
-				GUI_confirmationbox cb = new GUI_confirmationbox(gui.plugin, s2, hide_command);
+				GUI_confirmationbox cb = new GUI_confirmationbox(gui.plugin, s2, hide_command, use_console);
 				cb.setHeight(80).setWidth(227).setX(100).setY(80);
 				cb.setFixed(true);
 				cb.setAnchor(WidgetAnchor.SCALE);

@@ -1,5 +1,5 @@
 name: GUI Creator
-version: 1.6.9
+version: 1.4.5 b1
 author: coldandtired
 main: me.coldandtired.GUI_Creator.Main
 description: Generate GUIs for your players with the minimum of effort!
@@ -13,8 +13,6 @@ commands:
   open_screen:
     aliases: os
     description: Opens the GUI to a specified screen.
-  gctest:
-    description: testing
 permissions:
   gui_creator.can_reload_screens:
     description: Allows the user to reload the screens files.

@@ -32,8 +32,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.fusesource.jansi.Ansi;
-import org.fusesource.jansi.AnsiConsole;
 import org.getspout.spoutapi.SpoutManager;
 import org.getspout.spoutapi.keyboard.Keyboard;
 import org.getspout.spoutapi.player.SpoutPlayer;
@@ -45,7 +43,6 @@ public class Main extends JavaPlugin
 {
     public Logger log = Bukkit.getLogger();
     GUI_creator_listener listener = new GUI_creator_listener(this);
-   // public Map<String, GUI> guis;
     static List<Map<?, ?>> screen_files;
     static FileConfiguration config;
     static String screen_button_color;
@@ -307,19 +304,7 @@ public class Main extends JavaPlugin
     }
     
     public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args)
-	{    	
-    	if (cmd.getName().equalsIgnoreCase("gctest"))
-    	{
-    		if (sender.isOp())
-    		{
-    			getLogger().info(Ansi.ansi().fg(Ansi.Color.GREEN).bold().toString() + "Test 1"
-    					+ Ansi.ansi().fg(Ansi.Color.WHITE).bold().toString());
-    			AnsiConsole.out.println(Ansi.ansi().fg(Ansi.Color.YELLOW).bold().toString() +"test 2"
-    					+ Ansi.ansi().fg(Ansi.Color.WHITE).bold().toString());
-    		}
-    		return true;
-    	}
-    	
+	{      	
 		if (cmd.getName().equalsIgnoreCase("reload_GUI_creator") && args.length == 0)
 		{			
 			if (sender instanceof Player)
@@ -354,8 +339,7 @@ public class Main extends JavaPlugin
 			SpoutPlayer p;
 	    	if (sender instanceof SpoutPlayer) p = (SpoutPlayer)sender; else return true;
 			if (!p.isSpoutCraftEnabled() || Main.screen_files == null) return true;
-			GUI gui = new GUI(this, p);
-	    	//guis.put(p.getName(), gui);	
+			GUI gui = new GUI(this, p);	
 			if (args.length == 0) return true;
 			else
 			{
