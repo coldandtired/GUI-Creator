@@ -1,5 +1,5 @@
 name: GUI Creator
-version: 1.4.5 b1
+version: 1.4.7 b1
 author: coldandtired
 main: me.coldandtired.GUI_Creator.Main
 description: Generate GUIs for your players with the minimum of effort!
