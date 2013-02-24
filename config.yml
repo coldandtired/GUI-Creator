@@ -1,0 +1,23 @@
+check_for_newer_version: true
+open_screen: -1
+make_player_skins: true
+selected_button_color: 120,50,120
+screen_button_color: 150,150,150
+command_button_color: 255,255,255
+combo_box_color: 255,255,255
+button_hover_color: 150,120,50
+background_color: 0,0,0,130
+spacer_color: 255,255,255
+gradient_top_color: 255,255,255
+gradient_bottom_color: 255,255,255
+label_color: 255,255,255
+check_box_color: 255,255,255
+radio_button_color: 255,255,255
+slider_color: 255,255,255
+text_box_inner_color: 0,0,0,255
+text_box_outer_color: 159,159,159,255
+link_button_color: 255,255,255
+confirm_title: Confirm command!
+confirm_text: Are you sure?
+confirm_yes: 'Yes'
+confirm_no: 'No'

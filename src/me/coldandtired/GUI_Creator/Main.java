@@ -12,8 +12,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
-
 import javax.imageio.ImageIO;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -27,46 +25,34 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.getspout.spoutapi.SpoutManager;
+import org.getspout.spoutapi.event.input.KeyBindingEvent;
+import org.getspout.spoutapi.gui.ScreenType;
+import org.getspout.spoutapi.gui.Widget;
+import org.getspout.spoutapi.keyboard.BindingExecutionDelegate;
 import org.getspout.spoutapi.keyboard.Keyboard;
+import org.getspout.spoutapi.player.FileManager;
 import org.getspout.spoutapi.player.SpoutPlayer;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.yaml.snakeyaml.Yaml;
 
-public class Main extends JavaPlugin
+public class Main extends JavaPlugin implements BindingExecutionDelegate, Listener
 {
-    public Logger log = Bukkit.getLogger();
-    GUI_creator_listener listener = new GUI_creator_listener(this);
-    static List<Map<?, ?>> screen_files;
-    static FileConfiguration config;
-    static String screen_button_color;
-    static String selected_button_color;
-    static String command_button_color;
-    static String button_hover_color;
-    static String background_color;
-    static String gradient_top_color;
-    static String gradient_bottom_color;
-    static String spacer_color;
-    static String label_color;
-    static String check_box_color;
-    static String radio_button_color;
-    static String slider_color;
-    static String text_box_inner_color;
-    static String text_box_outer_color;
-    static String link_button_color;
-    static String combo_box_color;
-    static String url_button_color;
+    private List<Map<?, ?>> screen_files;
     public static Economy economy = null;
-    static boolean make_skins = true;
 
-    boolean is_latest_version()
+    void checkVersion()
 	{
+    	if (!getConfig().getBoolean("check_for_newer_version", true)) return;
+    	
 		DocumentBuilder dbf;
 		try 
 		{
@@ -74,37 +60,15 @@ public class Main extends JavaPlugin
 			Document doc = dbf.parse("http://dev.bukkit.org/server-mods/gui-creator/files.rss");
 			XPath xpath = XPathFactory.newInstance().newXPath();
 			String s = ((Element) xpath.evaluate("//item[1]/title", doc, XPathConstants.NODE)).getTextContent();
-			return (s.equalsIgnoreCase(getDescription().getVersion()));
+			if  (!s.equalsIgnoreCase(getDescription().getVersion())) getLogger().info("There's a more recent version available!");
 		} 
-		catch (Exception e) {return true;}		
+		catch (Exception e) {}		
 	}
-    
-    
+       
     @Override
     public void onDisable() 
     {
-    //	guis = null;
-    	log = null;
-    	listener = null;
     	screen_files = null;
-        config = null;
-        screen_button_color = null;
-        selected_button_color = null;
-        command_button_color = null;
-        button_hover_color = null;
-        background_color = null;
-        gradient_top_color = null;
-        gradient_bottom_color = null;
-        spacer_color = null;
-        label_color = null;
-        check_box_color = null;
-        radio_button_color = null;
-        slider_color = null;
-        text_box_inner_color = null;
-        text_box_outer_color = null;
-        link_button_color = null;
-        combo_box_color = null;
-        url_button_color = null;
         economy = null;
     }
     
@@ -145,8 +109,12 @@ public class Main extends JavaPlugin
     
     @Override
     public void onEnable() 
-    { 	
-    	if (!is_latest_version()) getLogger().info("There's a new version of GUI Creator available!");
+    { 	  
+    	getConfig().options().copyDefaults(true);		 
+		saveConfig();
+    	checkVersion();
+    	
+    	if (!reload()) return;
     	
     	try 
 		{
@@ -156,76 +124,17 @@ public class Main extends JavaPlugin
 		catch (IOException e) 
 		{
 		    getLogger().warning("Something went wrong with Metrics - it will be disabled.");
-		}
+		}  	
     	
-    	File f = new File(getDataFolder() + File.separator + "config.yml");
-		if (!f.exists())
-		{
-			try 
-			{
-				if (!getDataFolder().exists()) getDataFolder().mkdir();
-				f.createNewFile();							
-			} 
-			catch (Exception e) {e.printStackTrace();}
-		}
-		f = new File(getDataFolder() + File.separator + "Screens");
-		if (!f.exists()) f.mkdir();	
-		f = new File(getDataFolder() + File.separator + "Skins");
-		if (!f.exists()) f.mkdir();
+    	File f = new File(getDataFolder() + File.separator + "Skins");
+		if (!f.exists()) f.mkdir();		
+    
+		SpoutManager.getKeyBindingManager().registerBinding("gui_creator_show_gui", Keyboard.KEY_C, "Shows the GUI", this, this);
 		
-		make_example();
-		SpoutManager.getKeyBindingManager().registerBinding("gui_creator_show_gui", Keyboard.KEY_C, "Shows the GUI", listener, this);
-		config = getConfig();
-		config.addDefault("open_screen", -1);
-		config.addDefault("ignore_open_permission", false);
-		config.addDefault("ignore_reload_permission", false);
-		config.addDefault("make_player_skins", true);
-		config.addDefault("selected_button_color", "120,50,120");
-		config.addDefault("screen_button_color", "150,150,150");
-		config.addDefault("command_button_color", "255,255,255");
-		config.addDefault("combo_box_color", "255,255,255");
-		config.addDefault("url_button_color", "255,255,255");
-		config.addDefault("button_hover_color", "150,120,50");
-		config.addDefault("background_color", "0,0,0,130");
-		config.addDefault("spacer_color", "255,255,255");
-		config.addDefault("gradient_top_color", "255,255,255");
-		config.addDefault("gradient_bottom_color", "255,255,255");
-		config.addDefault("label_color", "255,255,255");
-		config.addDefault("check_box_color", "255,255,255");
-		config.addDefault("radio_button_color", "255,255,255");
-		config.addDefault("slider_color", "255,255,255");
-		config.addDefault("text_box_inner_color", "0,0,0,255");
-		config.addDefault("text_box_outer_color", "159,159,159,255");
-		config.addDefault("link_button_color", "255,255,255");
-		config.addDefault("confirm_title", "Confirm command!");
-		config.addDefault("confirm_text", "Are you sure?");
-		config.addDefault("confirm_yes", "Yes");
-		config.addDefault("confirm_no", "No");
-		config.options().copyDefaults(true);
-		saveConfig();
-		selected_button_color = config.getString("selected_button_color");
-		screen_button_color = config.getString("screen_button_color");
-		combo_box_color = config.getString("combo_box_color");
-		url_button_color = config.getString("url_button_color");
-		command_button_color = config.getString("command_button_color");
-		button_hover_color = config.getString("button_hover_color");
-		background_color = config.getString("background_color");
-		spacer_color = config.getString("spacer_color");
-		gradient_top_color = config.getString("gradient_top_color");
-		gradient_bottom_color = config.getString("gradient_bottom_color");
-		label_color = config.getString("label_color");
-		check_box_color = config.getString("check_box_color");
-		radio_button_color = config.getString("radio_button_color");
-		slider_color = config.getString("slider_color");
-		text_box_inner_color = config.getString("text_box_inner_color");
-		text_box_outer_color = config.getString("text_box_outer_color");
-		link_button_color = config.getString("link_button_color");
-		make_skins = config.getBoolean("make_player_skins");
-		get_screens();
 		PluginManager pm = Bukkit.getServer().getPluginManager();
-		pm.registerEvents(listener, this);
-		if (pm.getPlugin("Vault") != null) setup_economy();
-		log.info("[GUI Creator] Version " + getDescription().getVersion() + " running!");
+		if (pm.getPlugin("Vault") != null) setup_economy();	
+    	
+		pm.registerEvents(this, this);
 	}
     
     private Boolean setup_economy()
@@ -240,7 +149,7 @@ public class Main extends JavaPlugin
     
     private void make_example()
     {
-    	File f = new File(getDataFolder() + File.separator + "example.yml");
+    	File f = new File(getDataFolder() + File.separator + "Screens" + File.separator + "example.yml");
 		try 
 		{
 			f.createNewFile();
@@ -266,14 +175,36 @@ public class Main extends JavaPlugin
 		catch (IOException e) {e.printStackTrace();}
     }
     
-    void get_screens()
+    boolean reload()
+    {    	
+    	reloadConfig();
+		
+    	if (!getScreens())
+		{
+			getLogger().warning("No screen files found - plugin will stop");
+			setEnabled(false);
+			return false;
+		}  
+		
+		return true;
+    }
+    
+    private boolean getScreens()
     {
     	screen_files = null;
+    	File f = new File(getDataFolder() + File.separator + "Screens");
+		if (!f.exists())
+		{
+			f.mkdir();
+			make_example();
+			return false;
+		}
+		
 		InputStream input;
     	String loc = getDataFolder() + File.separator + "Screens" + File.separator;			
-		File dir = new File(loc);
-		String[] children = dir.list();
-		if (children.length == 0) return;
+		f = new File(loc);
+		String[] children = f.list();
+		if (children.length == 0) return false;
 		
 		screen_files = new ArrayList<Map<?, ?>>();
 		
@@ -300,24 +231,15 @@ public class Main extends JavaPlugin
 				}
 			}
 			catch (FileNotFoundException e) {e.printStackTrace();}
-		}		
+		}	
+		return true;
     }
     
     public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args)
 	{      	
 		if (cmd.getName().equalsIgnoreCase("reload_GUI_creator") && args.length == 0)
-		{			
-			if (sender instanceof Player)
-			{
-				boolean rl = config.getBoolean("ignore_reload_permission", false) ? sender.isOp() : sender.hasPermission("gui_creator.can_reload_screens");
-				if (!rl)
-				{
-					sender.sendMessage(ChatColor.RED + "[GUI Creator] You don't have permission to reload the screens!");
-					return true;
-				}
-			}
-			get_screens();
-			log.info("[GUI Creator] Screen files reloaded!");
+		{
+			reload();
 			if (sender instanceof SpoutPlayer) sender.sendMessage(ChatColor.GREEN + "[GUI Creator] Screen files reloaded!");
 			return true;
 		}
@@ -329,17 +251,11 @@ public class Main extends JavaPlugin
 				sender.sendMessage(ChatColor.RED + "[GUI Creator] This command can only be used by a player!");
 				return true;
 			}
-			boolean show = config.getBoolean("ignore_open_permission", false) ? sender.isOp() : sender.hasPermission("gui_creator.can_open_gui");
-			if (!show)
-			{
-				sender.sendMessage(ChatColor.RED + "[GUI Creator] You don't have permission to view the GUI!");
-				return true;
-			}
 			
 			SpoutPlayer p;
 	    	if (sender instanceof SpoutPlayer) p = (SpoutPlayer)sender; else return true;
-			if (!p.isSpoutCraftEnabled() || Main.screen_files == null) return true;
-			GUI gui = new GUI(this, p);	
+			if (!p.isSpoutCraftEnabled() || screen_files == null) return true;
+			Gui gui = new Gui(this, p);	
 			if (args.length == 0) return true;
 			else
 			{
@@ -348,4 +264,65 @@ public class Main extends JavaPlugin
 		}
 		return false;
 	}
+    
+    List<Map<?, ?>> getScreenFiles()
+    {
+    	return screen_files;
+    }
+    
+    public static String getString(String s)
+    {
+    	return Bukkit.getServer().getPluginManager().getPlugin("GUI Creator").getConfig().getString(s);
+    }
+    
+    public static boolean getBool(String s)
+    {
+    	return Bukkit.getServer().getPluginManager().getPlugin("GUI Creator").getConfig().getBoolean(s);
+    }
+
+// Listener stuff
+    
+    @Override
+	public void keyPressed(KeyBindingEvent event) 
+	{
+		SpoutPlayer p = event.getPlayer();
+    	if (p.hasPermission("gui_creator.can_open_gui"))
+		{
+			if (p.getActiveScreen() == ScreenType.GAME_SCREEN || (p.getActiveScreen() == ScreenType.CUSTOM_SCREEN && p.getMainScreen().getActivePopup() == null))
+			{
+				Gui gui = new Gui(this, p);
+				String[] params = Bukkit.getServer().getPluginManager().getPlugin("GUI Creator").getConfig().contains("open_screen") ? 
+						GuiControl.get_string(Main.getString("open_screen")).split(" ") : null;
+				int open = params != null ? Integer.parseInt(params[0]) : -2;
+		
+				p.getMainScreen().attachPopupScreen(gui);
+				if (open > -1) gui.jump_to_screen(open, params);
+			}
+			else if (p.getMainScreen().getActivePopup() instanceof Gui)				
+			{
+				for (Widget w : p.getMainScreen().getActivePopup().getAttachedWidgets())
+				{
+					if (w instanceof GuiTextField && ((GuiTextField)w).isFocus()) return;
+				}
+				p.getMainScreen().closePopup();
+			}				
+    	}
+	}
+
+	@Override
+	public void keyReleased(KeyBindingEvent event) {}
+
+	@EventHandler
+	public void onPlayerJoin(PlayerJoinEvent event)
+	{
+		if (!Main.getBool("make_player_skins")) return;
+		
+		File f = create_skin(event.getPlayer().getName());
+		if (f != null)
+		{
+			FileManager fm = SpoutManager.getFileManager();
+			if (!fm.getCache(this).contains(f)) fm.addToCache(this, f);
+		}
+	}
+
 }

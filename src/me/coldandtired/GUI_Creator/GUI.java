@@ -5,6 +5,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Map;
 
+import org.bukkit.Bukkit;
 import org.bukkit.permissions.Permission;
 import org.getspout.spoutapi.gui.ContainerType;
 import org.getspout.spoutapi.gui.GenericContainer;
@@ -16,16 +17,16 @@ import org.getspout.spoutapi.gui.Widget;
 import org.getspout.spoutapi.gui.WidgetAnchor;
 import org.getspout.spoutapi.player.SpoutPlayer;
 
-public class GUI  extends GenericPopup
+public class Gui  extends GenericPopup
 {
 	String label;
 	String info;
-	ArrayList<GUI_screen> screens = new ArrayList<GUI_screen>();
-	ArrayList<GUI_screen> hidden_screens = new ArrayList<GUI_screen>();
+	ArrayList<GuiScreen> screens = new ArrayList<GuiScreen>();
+	ArrayList<GuiScreen> hidden_screens = new ArrayList<GuiScreen>();
 	int col_width;
 	Main plugin;
 	SpoutPlayer me;
-	GUI_screen sb;
+	GuiScreen sb;
 	String[] params;
 	
 	String replace_params(String s, String n, String text)
@@ -44,7 +45,7 @@ public class GUI  extends GenericPopup
 		String replacement = "";
 		if (name.equalsIgnoreCase(n)) replacement = text;
 		else
-		for (GUI_control g : sb.controls)
+		for (GuiControl g : sb.controls)
 		{
 			if (g.check_box != null && g.check_box.name.equalsIgnoreCase(name))
 			{
@@ -136,9 +137,9 @@ public class GUI  extends GenericPopup
 	{
 		for (Widget w : this.getAttachedWidgets())
 		{
-			if (w instanceof GUI_button)
+			if (w instanceof GuiButton)
 			{
-				GUI_button bt = (GUI_button)w; 
+				GuiButton bt = (GuiButton)w; 
 				String s = "";
 				
 				if (!bt.hide_command)
@@ -169,9 +170,9 @@ public class GUI  extends GenericPopup
 	{
 		for (Widget w : this.getAttachedWidgets())
 		{
-			if (w instanceof GUI_screen)
+			if (w instanceof GuiScreen)
 			{
-				GUI_screen c = (GUI_screen)w; 
+				GuiScreen c = (GuiScreen)w; 
 				String s = c.text;
 				while (s.contains("^")) s = replace_params(s, "", "");
 				c.setText(s);
@@ -179,9 +180,9 @@ public class GUI  extends GenericPopup
 				while (s.contains("^")) s = replace_params(s, "", "");
 				c.setTooltip(s);
 			}
-			if (w instanceof GUI_button)
+			if (w instanceof GuiButton)
 			{
-				GUI_button bt = (GUI_button)w; 
+				GuiButton bt = (GuiButton)w; 
 				String s = bt.text;
 				while (s.contains("^")) s = replace_params(s, "", "");
 				bt.setText(s);
@@ -189,16 +190,16 @@ public class GUI  extends GenericPopup
 				while (s.contains("^")) s = replace_params(s, "", "");
 				bt.setTooltip(s);
 			}
-			if (w instanceof GUI_label)
+			if (w instanceof GuiLabel)
 			{
-				GUI_label lb = (GUI_label)w; 
+				GuiLabel lb = (GuiLabel)w; 
 				String s = lb.text;
 				while (s.contains("^")) s = replace_params(s, "", "");
 				lb.setText(s);
 			}
-			if (w instanceof GUI_checkbox)
+			if (w instanceof GuiCheckBox)
 			{
-				GUI_checkbox c = (GUI_checkbox)w; 
+				GuiCheckBox c = (GuiCheckBox)w; 
 				String s = c.text;
 				while (s.contains("^")) s = replace_params(s, "", "");
 				c.setText(s);
@@ -206,9 +207,9 @@ public class GUI  extends GenericPopup
 				while (s.contains("^")) s = replace_params(s, "", "");
 				c.setTooltip(s);
 			}
-			if (w instanceof GUI_linkbutton)
+			if (w instanceof GuiLinkButton)
 			{
-				GUI_linkbutton c = (GUI_linkbutton)w; 
+				GuiLinkButton c = (GuiLinkButton)w; 
 				String s = c.text;
 				while (s.contains("^")) s = replace_params(s, "", "");
 				c.setText(s);
@@ -216,9 +217,9 @@ public class GUI  extends GenericPopup
 				while (s.contains("^")) s = replace_params(s, "", "");
 				c.setTooltip(s);
 			}
-			if (w instanceof GUI_radiobutton)
+			if (w instanceof GuiRadioButton)
 			{
-				GUI_radiobutton c = (GUI_radiobutton)w; 
+				GuiRadioButton c = (GuiRadioButton)w; 
 				String s = c.text;
 				while (s.contains("^")) s = replace_params(s, "", "");
 				c.setText(s);
@@ -226,9 +227,9 @@ public class GUI  extends GenericPopup
 				while (s.contains("^")) s = replace_params(s, "", "");
 				c.setTooltip(s);
 			}
-			if (w instanceof GUI_slider)
+			if (w instanceof GuiSlider)
 			{
-				GUI_slider c = (GUI_slider)w; 
+				GuiSlider c = (GuiSlider)w; 
 				String s = c.text;
 				while (s.contains("^")) s = replace_params(s, "", "");
 				c.setText(s);
@@ -236,15 +237,22 @@ public class GUI  extends GenericPopup
 				while (s.contains("^")) s = replace_params(s, "", "");
 				c.setTooltip(s);
 			}
-			if (w instanceof GUI_textfield)
+			if (w instanceof GuiTextField)
 			{
-				GUI_textfield c = (GUI_textfield)w; 
+				GuiTextField c = (GuiTextField)w; 
 				String s = c.ph;
 				while (s.contains("^")) s = replace_params(s, "", "");
 				c.setPlaceholder(s);
 				s = c.info;
 				while (s.contains("^")) s = replace_params(s, "", "");
 				c.setTooltip(s);
+			}
+			if (w instanceof GuiTexture)
+			{
+				GuiTexture gt = (GuiTexture)w;
+				String s = gt.getLink();
+				while (s.contains("^")) s = replace_params(s, "", "");
+				gt.setUrl(s);
 			}
 		}
 		update_tooltips("", "");
@@ -254,15 +262,15 @@ public class GUI  extends GenericPopup
 	{	
 		if (!hidden)
 		{
-			for (GUI_screen s : screens)
-				if (screens.indexOf(s) == screen) s.setColor(GUI_control.get_colour(Main.selected_button_color));
+			for (GuiScreen s : screens)
+				if (screens.indexOf(s) == screen) s.setColor(GuiControl.get_colour(Main.getString("selected_button_color")));
 					else s.setColor(s.text_colour);
 					sb = screens.get(screen);
 		} else sb = hidden_screens.get(screen);
 		
 		for (Widget w : this.getAttachedWidgets())
 		{
-			if (w instanceof GUI_paginatebutton || w instanceof GUI_screen || w instanceof GUI_closebutton || w instanceof GUI_reloadbutton)
+			if (w instanceof GuiPaginateButton || w instanceof GuiScreen || w instanceof GuiCloseButton || w instanceof GuiReloadButton)
 				continue; else removeWidget(w);
 		}
 		Gradient gr = new GenericGradient();
@@ -274,7 +282,7 @@ public class GUI  extends GenericPopup
 		
 		int gap = 2;
 		col_width = (int) ((gr.getWidth() - 4 - ((sb.num_columns * gap) + gap)) / sb.num_columns);
-		for (GUI_control g : sb.controls)
+		for (GuiControl g : sb.controls)
 		{
 			int w = g.width > -1 ? g.width : (col_width * g.col_span) + ((g.col_span - 1) * gap);
 			int h = g.height > -1 ? g.height : (sb.row_height * g.row_span) + ((g.row_span - 1) * gap);
@@ -369,13 +377,13 @@ public class GUI  extends GenericPopup
 				gc.setX(x).setY(y);
 				gc.setWidth(w).setHeight(h);
 				gc.setLayout(ContainerType.HORIZONTAL);
-				GUI_sliderminus sm = new GUI_sliderminus("<", this);
+				GuiSliderMinus sm = new GuiSliderMinus("<", this);
 				sm.setX(x).setY(y);
 				sm.setWidth(10).setHeight(h);
 				g.slider.setWidth(w - 18).setHeight(h);
 				g.slider.setX(x + 8).setY(y);
 				g.slider.setFixed(true);
-				GUI_sliderplus sp = new GUI_sliderplus(">", this);
+				GuiSliderPlus sp = new GuiSliderPlus(">", this);
 				sm.setX(gc.getWidth() - 10).setY(y);
 				sm.setWidth(10).setHeight(h);
 				gc.addChildren(sm, g.slider, sp);
@@ -389,26 +397,17 @@ public class GUI  extends GenericPopup
 				g.combo_box.setFixed(true);
 				attachWidget(plugin, g.combo_box);	
 			}
-			
-			else if (g.url_button != null)
-			{
-				g.url_button.setX(x).setY(y);
-				g.url_button.setWidth(w).setHeight(h);
-				g.url_button.setAlign(WidgetAnchor.CENTER_CENTER);
-				g.url_button.setFixed(true);
-				attachWidget(plugin, g.url_button);
-			}
 		}		
 		for (Widget w : this.getAttachedWidgets())
 		{
-			if (w instanceof GUI_radiobutton)
+			if (w instanceof GuiRadioButton)
 			{
-				GUI_radiobutton rb = (GUI_radiobutton)w;
+				GuiRadioButton rb = (GuiRadioButton)w;
 				if (rb.selected) rb.setSelected(true);
 			}
-			else if (w instanceof GUI_slider)
+			else if (w instanceof GuiSlider)
 			{
-				GUI_slider slider = (GUI_slider)w;
+				GuiSlider slider = (GuiSlider)w;
 				if (!slider.skin_texture.equalsIgnoreCase("") && !slider.mode.equalsIgnoreCase("normal")) 
 					update_texture(slider.skin_texture, slider.get_value((int) (slider.getSliderPosition()) * slider.max));
 			}
@@ -418,7 +417,7 @@ public class GUI  extends GenericPopup
 	
 	void update_texture(String name, String player)
 	{
-		for (GUI_control g : sb.controls)
+		for (GuiControl g : sb.controls)
 		{
 			if (g.texture != null && g.texture.name.equalsIgnoreCase(name))
 			{
@@ -430,7 +429,7 @@ public class GUI  extends GenericPopup
 	
 	void fill_screen_area(int index)
 	{							
-		for (Widget w : getAttachedWidgets()) if (w instanceof GUI_screen || w instanceof GUI_paginatebutton) removeWidget(w);
+		for (Widget w : getAttachedWidgets()) if (w instanceof GuiScreen || w instanceof GuiPaginateButton) removeWidget(w);
 		int start;
 		int count = screens.size() - index;
 		int end = index + 5 < count ? index + 5 : screens.size();		
@@ -438,7 +437,7 @@ public class GUI  extends GenericPopup
 		start = 213 - ((count * 81) / 2);
     	for (int i = index; i < end; i++)
     	{
-    		GUI_screen sb = screens.get(i);
+    		GuiScreen sb = screens.get(i);
     		sb.setWidth(80).setHeight(15);
     		sb.setX(start + i % 5 * 81);
     		sb.setY(3);
@@ -447,13 +446,13 @@ public class GUI  extends GenericPopup
     	}
     	if (index > 0)
     	{
-    		GUI_paginatebutton previous = new GUI_paginatebutton("<", Math.max(0, index - 5), this);
+    		GuiPaginateButton previous = new GuiPaginateButton("<", Math.max(0, index - 5), this);
     		previous.setHeight(15).setWidth(10).setY(3).setX(0);
     		attachWidget(plugin, previous);
     	}
     	if (end < screens.size())
     	{
-    		GUI_paginatebutton next = new GUI_paginatebutton(">", end, this);
+    		GuiPaginateButton next = new GuiPaginateButton(">", end, this);
     		next.setHeight(15).setWidth(10).setY(3).setX(415);
     		attachWidget(plugin, next);
     	}
@@ -467,7 +466,7 @@ public class GUI  extends GenericPopup
 			for (int i = 1; i < params.length; i++) this.params[i -1] = params[i];
 		} else this.params = null;
 				
-		for (GUI_screen g : screens)
+		for (GuiScreen g : screens)
 		{
 			if (g.id == id) 
 			{
@@ -491,7 +490,7 @@ public class GUI  extends GenericPopup
 			}
 		}
 		
-		for (GUI_screen g : hidden_screens)
+		for (GuiScreen g : hidden_screens)
 		{
 			if (g.id == id) 
 			{
@@ -516,14 +515,14 @@ public class GUI  extends GenericPopup
 	}
 	
 	@SuppressWarnings("unchecked")
-	GUI(Main plugin, SpoutPlayer me)
+	Gui(Main plugin, SpoutPlayer me)
 	{		
 		fixed = true;
 		setAnchor(WidgetAnchor.SCALE);
 		this.me = me;
 		setTransparent(true);
 		this.plugin = plugin;
-		for (Map<?, ?> map : Main.screen_files)
+		for (Map<?, ?> map : plugin.getScreenFiles())
 		{
 			ArrayList<Map<String, Object>> b = (ArrayList<Map<String, Object>>) map.get("screens");
 			for (int i = 0; i < b.size(); i++)
@@ -547,11 +546,11 @@ public class GUI  extends GenericPopup
 					else show = true;
 				}
 				if (b.get(i).containsKey("hidden")) show = false;
-				if (show) screens.add(new GUI_screen(b.get(i), this, i)); else hidden_screens.add(new GUI_screen(b.get(i), this, i));
+				if (show) screens.add(new GuiScreen(b.get(i), this, i)); else hidden_screens.add(new GuiScreen(b.get(i), this, i));
 			}
 		}		
 		fill_screen_area(0);
-		GUI_closebutton cb = new GUI_closebutton();
+		GuiCloseButton cb = new GuiCloseButton();
 		cb.setText("X").setWidth(30).setHeight(15).setX(395).setY(223);
 		cb.setTooltip("Closes the GUI");
 		attachWidget(plugin, cb);
@@ -559,14 +558,14 @@ public class GUI  extends GenericPopup
 		Permission perm = new Permission("gui_creator.can_reload_screens");
     	if (me.hasPermission(perm))
     	{
-    		GUI_reloadbutton reload_button = new GUI_reloadbutton(plugin);
+    		GuiReloadButton reload_button = new GuiReloadButton(plugin);
 			reload_button.setTooltip("Reloads the screens");
 			reload_button.setText("/rgc").setWidth(30).setHeight(15).setX(3).setY(223);
 			attachWidget(plugin, reload_button);
     	}
 		
-		int open = Main.config.getInt("open_screen", -1);
-		String[] params = Main.config.getString("open_params", "").split(" ");
+		int open = Bukkit.getServer().getPluginManager().getPlugin("GUI Creator").getConfig().getInt("open_screen", -1);
+		String[] params = Bukkit.getServer().getPluginManager().getPlugin("GUI Creator").getConfig().getString("open_params", "").split(" ");
 		
     	me.getMainScreen().attachPopupScreen(this);
     	if (open > -1) jump_to_screen(open, params);
